@@ -7,7 +7,6 @@ Replace this with more appropriate tests for your application.
 
 from django.test import TestCase
 
-
 class BinderTest(TestCase):
     def test_front_page(self):
         response = self.client.get('/')

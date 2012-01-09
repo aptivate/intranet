@@ -1,7 +1,15 @@
 {% extends 'default_layout.dhtml' %}
 
+{% block title %}
+	Front Page
+{% endblock %}
+
+{% block heading %}
+	Front Page
+{% endblock %}
+
 {% block body %}
-	<p>Welcome to the {{ APP_TITLE }}. You may need to
+	<p>Welcome to the {{ global.app_title }}. You may need to
 	<a href="{% url django.contrib.auth.views.login %}">log in</a> to access
 	this site.</p>
 {% endblock %}

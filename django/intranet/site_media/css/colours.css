@@ -1,0 +1,64 @@
+h1
+{
+	color: black;
+}
+
+ul.tabs.level1
+{
+	background-color: #ddd;
+}
+
+h1, ul.tabs.level1 li a
+{
+	background-color: #ccc;
+}
+
+ul.tabs.level1 li.selected a,
+ul.tabs.level1 li a:hover,
+ul.tabs.level2
+{
+	background-color: #eee;
+}
+
+ul.tabs.level1 li.selected a
+{
+	border-bottom-color: #eee;
+}
+
+ul.tabs.level2 li a
+{
+	background-color: #ddd;
+}
+
+ul.tabs.level2 li.selected a
+{
+	background-color: white;
+	border-bottom-color: white;
+}
+
+th
+{
+	border-color: #ccc;
+	background-color: #eee;
+}
+
+td
+{
+	border-color: #ddd;
+}
+
+tr.alt td
+{
+	background-color: #eee;
+}
+
+table.edit
+{
+	border-color: #eee;
+}
+
+table.edit td
+{
+	border-color: #ddd;
+	background: #eee;
+}

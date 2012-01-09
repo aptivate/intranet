@@ -1,15 +1,17 @@
 <html>
 	<head>
-		<title>{{ APP_TITLE }} | {% block title %}{% endblock %}</title>
+		<title>{{ global.app_title }} | {% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/global.css" />
+		<link rel="stylesheet" href="{{ STATIC_URL }}css/colours.css" />
 	</head>
 	<body>
-		<h1>{{ APP_TITLE }}</h1>
-		<h2>{% block heading %}{% endblock %}</h2>
-		<ul class="main_menu">
-			{% for menu_item in main_menu_items %}
+		<h1>{{ global.app_title }}</h1>
+		<ul class="main_menu tabs level1">
+			{% for menu_item in global.main_menu_items %}
 			<li><a href="{{ menu_item.href }}">{{ menu_item.title }}</a></li>
 			{% endfor %}
 		</ul>
+		<h2>{% block heading %}{% endblock %}</h2>
 		{% block body %}
 		Default Body
 		{% endblock %}

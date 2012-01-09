@@ -1,0 +1,173 @@
+h1
+{
+	margin: 0px;
+	padding: 10px;
+	border-style: solid none;
+	border-width: 1px;
+	border-color: black;
+}
+
+ul.tabs
+{
+	margin: 0;
+	border-bottom: 1px solid black;
+	list-style: none;
+}
+
+ul.tabs li
+{
+	display: inline;
+	margin: 0;
+	padding: 0;
+	position: relative;
+	top: 1px;
+}
+
+ul.tabs li a
+{
+	margin: 0;
+	border: 1px solid black;
+	padding: 0.5em 1em;
+	text-decoration: none;
+	color: black;
+}
+
+ul.tabs li a:hover
+{
+}
+
+ul.tabs li.selected a
+{
+}
+
+ul.tabs.level1
+{
+	padding: 1em 10px 0.5em;
+}
+
+ul.tabs.level1 li a
+{
+	padding: 0.5em 1em;
+}
+
+ul.tabs.level2
+{
+	padding: 1em 10px 0.2em;
+	font-size: small;
+}
+
+ul.tabs.level2 li a
+{
+	padding: 0.2em 0.4em;
+}
+
+ul.tabs.level2 li a:hover
+{
+	background-color: white;
+}
+
+ul.tabs.level2 li.selected a
+{
+	background-color: white;
+	border-bottom: 1px solid white;
+}
+
+table
+{
+	margin: 1em 0;
+	border-collapse: collapse;
+}
+
+td, th
+{
+	border-style: solid none;
+	border-width: 1px;
+	vertical-align: middle;
+	padding: 0.2em 1em;
+}
+
+th
+{
+	/*border-right:  1px solid white;*/
+	text-align: left;
+	vertical-align: bottom;
+}
+
+tr.alt td
+{
+}
+
+td a
+{
+	text-decoration: none;
+	color: #408;
+}
+
+td a:hover
+{
+	text-decoration: underline;
+}
+
+td, th
+{
+	padding: 0.2em 1em;
+}
+
+td, th
+{
+	vertical-align: middle;
+}
+
+form
+{
+	padding: 0;
+	margin: 0;
+}
+
+table.edit
+{
+}
+
+table.edit td
+{
+	border-style: solid;
+	border-width: 1px 0px;
+	padding: 0.5em;
+}
+
+div.warning-message, div.success-message, div.error-message
+{
+	color: black;
+	padding: 0.5em;
+	margin: 1em;
+}
+
+div#warning-message
+{
+	background: #ffd;
+	border: 2px solid #fc8;
+}
+
+div.success-message
+{
+	background: #dfd;
+	border: 2px solid #8f8;
+}
+
+div.error-message
+{
+	padding: 8px 8px 8px 40px;
+	background: #fdd url(../images/warning.png) no-repeat 8px;
+}
+
+div.formError
+{
+	margin: 0.5em 0 0;
+	padding: 4px 4px 4px 32px;
+	background: #fdd url(../images/warning.png) no-repeat 4px;
+}
+
+div.error-message, div.formError
+{
+	border: 2px solid #fbb;
+}
