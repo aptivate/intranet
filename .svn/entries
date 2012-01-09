@@ -1,0 +1,80 @@
+10
+
+dir
+7090
+https://svn.aptivate.org/svn/model_django_project/trunk/dev
+https://svn.aptivate.org/svn
+
+
+
+2012-01-05T11:30:54.740298Z
+7067
+martinb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+679a26be-e637-0410-a801-b7d8065a4221
+
+apache
+dir
+
+jenkins
+dir
+
+django
+dir
+
+LICENSE
+file
+
+
+
+
+2012-01-09T11:32:03.861583Z
+d32239bcb673463ab874e80d47fae504
+2011-08-01T14:36:23.617868Z
+5690
+hamish
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+35147
+
+scripts
+dir
+
+wsgi
+dir
+
+deploy
+dir
+
