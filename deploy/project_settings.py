@@ -2,7 +2,7 @@
 
 # This is the directory inside the project dev dir that contains the django
 # application
-project_name = "insert_project_name_here"
+project_name = "intranet"
 
 # put "django" here if you want django specific stuff to run
 # put "plain" here for a basic apache app

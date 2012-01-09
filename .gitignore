@@ -1,0 +1,13 @@
+*.pyc
+.*.swp
+*~
+django/intranet/local_settings.py
+django/intranet/private_settings.py
+django/intranet/.ve
+django/intranet/distribute-*.tar.gz
+reports/*
+.settings/*
+.pydevproject
+.DS_Store
+/.metadata
+/.settings
