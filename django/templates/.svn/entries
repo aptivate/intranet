@@ -4,7 +4,7 @@ dir
 7090
 https://svn.aptivate.org/svn/model_django_project/trunk/dev/django/templates
 https://svn.aptivate.org/svn
-
+delete
 
 
 2011-08-01T14:35:59.811351Z
@@ -31,7 +31,7 @@ file
 
 
 
-
+delete
 2012-01-09T11:32:03.409583Z
 b5a9cb24b9edb43c11aa213fea0a5829
 2011-08-01T14:35:59.811351Z
@@ -65,7 +65,7 @@ file
 
 
 
-
+delete
 2012-01-09T11:32:03.413583Z
 981c0df297df34e5bb29f1b7e5fd0c65
 2011-08-01T14:35:59.811351Z
