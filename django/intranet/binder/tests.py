@@ -5,6 +5,7 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 import settings
@@ -30,5 +31,8 @@ class BinderTest(TestCase):
     def test_menu_tag(self):
         response = self.client.get('/')
         self.assertEqual('<li class="selected"><a href="/">Home</a></li>',
+            menu_tag.menu_item(response.context, 'front_page', 'Home'))
+        response = self.client.get(reverse(documents.urls.urlpatterns[0].name))
+        self.assertEqual('<li ><a href="/">Home</a></li>',
             menu_tag.menu_item(response.context, 'front_page', 'Home'))
             
