@@ -16,6 +16,7 @@
 	
 	<form method="post">
 		{% csrf_token %}
+		<input type="hidden" name="next" value="/" />
 		<table>
 			<tr>
 				<th><label for="id_username">User name</label></th>

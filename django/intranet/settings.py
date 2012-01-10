@@ -155,3 +155,10 @@ LOGGING = {
 
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
+from private_settings import *
+
+GLOBAL_CONTEXT = {
+    'global': {
+        'app_title': APP_TITLE,
+    }
+}

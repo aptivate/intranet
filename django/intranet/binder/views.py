@@ -2,10 +2,10 @@
 
 from django.views.generic.base import TemplateView
 
-import combined_settings
+import settings
 
 class FrontPageView(TemplateView):
      template_name = 'front_page.dhtml'
      
      def get_context_data(self, **kwargs):
-        return {'APP_TITLE': combined_settings.APP_TITLE}
+         return settings.GLOBAL_CONTEXT
