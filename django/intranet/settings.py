@@ -160,3 +160,10 @@ from private_settings import *
 GLOBAL_CONTEXT = {
     'app_title': APP_TITLE,
 }
+
+from binder.main_menu import Generator
+
+MENU_GENERATORS = [
+    Generator('front_page', 'Home'),
+    Generator('intranet-documents-index', 'Documents'),
+    ]

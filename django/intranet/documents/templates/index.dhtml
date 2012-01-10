@@ -1,0 +1,13 @@
+{% extends 'default_layout.dhtml' %}
+
+{% block title %}
+	Documents
+{% endblock %}
+
+{% block heading %}
+	Documents
+{% endblock %}
+
+{% block body %}
+	<p>This is the documents index.</p>
+{% endblock %}

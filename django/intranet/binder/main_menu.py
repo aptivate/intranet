@@ -1,9 +1,22 @@
 from collections import namedtuple
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
+import settings
 
-MainMenuItem = namedtuple('MainMenuItem', ('href', 'title'))
+Item = namedtuple('Item', ('href', 'title'))
+
+Generator = namedtuple('Generator', ('link_name', 'title'))
 
 def generate():
-    return [
-        MainMenuItem(reverse('front_page'), 'Home'),
-    ]
+    items = []
+    
+    for g in settings.MENU_GENERATORS:
+        try:
+            items.append(Item(reverse(g.link_name), g.title))
+        except NoReverseMatch:
+            raise ValueError(("Failed to find a URL named %s. " +
+                "Did you install it in urls.py?") % g.link_name)
+    
+    return items
+
+def append(link_name, title):
+    settings.MENU_GENERATORS.append(Generator(link_name, title))
