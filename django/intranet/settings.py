@@ -153,17 +153,12 @@ LOGGING = {
     }
 }
 
+from django.conf import global_settings
+
+TEMPLATE_CONTEXT_PROCESSORS = \
+    list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
+    ['lib.context.intranet_global']
+
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
 from private_settings import *
-
-GLOBAL_CONTEXT = {
-    'app_title': APP_TITLE,
-}
-
-from binder.main_menu import Generator
-
-MENU_GENERATORS = [
-    Generator('front_page', 'Home'),
-    Generator('intranet-documents-index', 'Documents'),
-    ]

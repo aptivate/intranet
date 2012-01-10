@@ -17,12 +17,12 @@ ul.tabs.level1 li.selected a,
 ul.tabs.level1 li a:hover,
 ul.tabs.level2
 {
-	background-color: #eee;
+	background-color: white;
 }
 
 ul.tabs.level1 li.selected a
 {
-	border-bottom-color: #eee;
+	border-bottom-color: white;
 }
 
 ul.tabs.level2 li a

@@ -2,7 +2,8 @@ from django.conf.urls.defaults import patterns, include, url
 
 import django.contrib.auth.views
 
-import lib.context
+import settings
+import lib.dictutils
 import binder.views
 import documents.urls
 
@@ -12,12 +13,15 @@ import documents.urls
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', binder.views.FrontPageView.as_view(**lib.context.context_with_global()),
+    url(r'^$', 
+        binder.views.FrontPageView.as_view(),
         name='front_page'),
     url(r'^login$', django.contrib.auth.views.login,
-        lib.context.context_with_global(template_name='login.dhtml'), name="login"),
+        {'template_name': 'login.dhtml'}, 
+        name="login"),
     url(r'^logout$', django.contrib.auth.views.logout,
-        lib.context.context_with_global(template_name='front_page.dhtml'), name="logout"),
+        {'template_name': 'front_page.dhtml'}, 
+        name="logout"),
     url(r'^documents/', include(documents.urls)),
     # url(r'^intranet/', include('intranet.foo.urls')),
 

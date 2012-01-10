@@ -7,14 +7,17 @@
 	<body>
 		<h1>{{ global.app_title }}</h1>
 		<ul class="main_menu tabs level1">
-			{% for menu_item in global.main_menu_items %}
-				<li><a href="{{ menu_item.href }}">{{ menu_item.title }}</a></li>
+			{% for menu_item in global.main_menu %}
+				<li {% if menu_item.href == global.path %}class="selected"{% endif %}
+					><a href="{{ menu_item.href }}">{{ menu_item.title }}</a></li>
 			{% endfor %}
 
 			{% if user.username %}
-				<li><a href="{% url logout %}">Log out</a></li>
+				<li {% if menu_item.href == global.path %}class="selected"{% endif %}
+					><a href="{% url logout %}">Log out</a></li>
 			{% else %}
-				<li><a href="{% url login %}">Log in</a></li>
+				<li {% if menu_item.href == global.path %}class="selected"{% endif %}
+					><a href="{% url login %}">Log in</a></li>
 			{% endif %}
 		</ul>
 		<h2>{% block heading %}{% endblock %}</h2>
