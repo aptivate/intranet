@@ -158,7 +158,5 @@ from local_settings import *
 from private_settings import *
 
 GLOBAL_CONTEXT = {
-    'global': {
-        'app_title': APP_TITLE,
-    }
+    'app_title': APP_TITLE,
 }

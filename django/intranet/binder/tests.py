@@ -6,11 +6,12 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
+
 import settings
 
 class BinderTest(TestCase):
     def test_front_page(self):
         response = self.client.get('/')
-        self.assertContains(response,
-            "Welcome to the %s" % settings.APP_TITLE,
-            msg_prefix=response.content)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['global'],
+            settings.GLOBAL_CONTEXT['global'])
