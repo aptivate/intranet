@@ -36,10 +36,15 @@ ul.tabs.level2 li.selected a
 	border-bottom-color: white;
 }
 
-th
+th, table caption
 {
 	border-color: #ccc;
 	background-color: #eee;
+}
+
+table caption
+{
+	border-top: 1px solid #ccc;
 }
 
 td
