@@ -6,6 +6,7 @@ import settings
 import lib.dictutils
 import binder.views
 import documents.urls
+from django.contrib.auth.models import User
 
 # Uncomment the next two lines to enable the admin:
 
@@ -24,6 +25,7 @@ urlpatterns = patterns('',
         {'template_name': 'front_page.dhtml'}, 
         name="logout"),
     url(r'^documents/', include(documents.urls)),
+    url(r'^users/', include(admin.site._registry[User].urls)),
     # url(r'^intranet/', include('intranet.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

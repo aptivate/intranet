@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.template import Context
 
 import settings
 import documents.urls
@@ -27,12 +28,21 @@ class BinderTest(TestCase):
         self.assertEqual("Documents", main_menu[1].title)
         self.assertEqual(documents.urls.urlpatterns[0].name,
             main_menu[1].url_name)
+        self.assertEqual("Users", main_menu[2].title)
+        self.assertEqual('/users', main_menu[2].url_name)
         
-    def test_menu_tag(self):
-        response = self.client.get('/')
+    def test_menu_tag_with_named_route(self):
+        context = Context({'global':{'path':'/'}})
         self.assertEqual('<li class="selected"><a href="/">Home</a></li>',
-            menu_tag.menu_item(response.context, 'front_page', 'Home'))
-        response = self.client.get(reverse(documents.urls.urlpatterns[0].name))
+            menu_tag.menu_item(context, 'front_page', 'Home'))
+
+        context = Context({'global':{'path':'/foo'}})
         self.assertEqual('<li ><a href="/">Home</a></li>',
-            menu_tag.menu_item(response.context, 'front_page', 'Home'))
-            
+            menu_tag.menu_item(context, 'front_page', 'Home'))
+
+    def test_menu_tag_with_uri(self):
+        context = Context({'global':{'path':'/foo'}})
+        self.assertEqual('<li ><a href="/">Home</a></li>',
+            menu_tag.menu_item(context, '/', 'Home'))
+        self.assertEqual('<li ><a href="/home">Home</a></li>',
+            menu_tag.menu_item(context, '/home', 'Home'))

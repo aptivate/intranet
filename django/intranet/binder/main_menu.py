@@ -1,6 +1,7 @@
 from collections import namedtuple
 
 from django.core.urlresolvers import reverse, NoReverseMatch
+from django.contrib.auth.admin import UserAdmin
 
 Generator = namedtuple('Generator', ('url_name', 'title'))
 Item = namedtuple('Item', ('href', 'title'))
@@ -19,4 +20,5 @@ class Menu:
 MAIN_MENU = Menu()
 MAIN_MENU.append("Home", 'front_page')
 MAIN_MENU.append("Documents", 'org.aptivate.intranet.documents.index')
+MAIN_MENU.append("Users", '/users')
 

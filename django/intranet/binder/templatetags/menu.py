@@ -3,9 +3,13 @@ from django.core.urlresolvers import reverse
 from django.utils import html
 
 register = template.Library()
+
 @register.simple_tag(takes_context=True)
-def menu_item(context, url_name, label):
-    href = reverse(url_name)
+def menu_item(context, uri_or_name, label):
+    if uri_or_name[0] == '/':
+        href = uri_or_name
+    else:
+        href = reverse(uri_or_name)
     
     attributes = {}
     if context['global']['path'] == href:
