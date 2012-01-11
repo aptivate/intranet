@@ -19,6 +19,6 @@ class Menu:
 
 MAIN_MENU = Menu()
 MAIN_MENU.append("Home", 'front_page')
-MAIN_MENU.append("Documents", 'org.aptivate.intranet.documents.index')
-MAIN_MENU.append("Users", '/users')
+MAIN_MENU.append("Documents", 'documents_document_changelist')
+MAIN_MENU.append("Users", '/users/')
 
