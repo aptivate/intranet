@@ -56,6 +56,8 @@ def replacement_get_response(self, request):
     the original get_response, this does not catch exceptions.
     """
     
+    # print("get_response(%s)" % request)
+    
     from django.core import exceptions, urlresolvers
     from django.conf import settings
 
@@ -131,6 +133,26 @@ def replacement_get_response(self, request):
 
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+from django.db.models.query import QuerySet
+def replacement_queryset_get(self, *args, **kwargs):
+    """
+    Performs the query and returns a single object matching the given
+    keyword arguments.
+    """
+    clone = self.filter(*args, **kwargs)
+    if self.query.can_filter():
+        clone = clone.order_by()
+    num = len(clone)
+    if num == 1:
+        return clone._result_cache[0]
+    if not num:
+        raise self.model.DoesNotExist(("%s matching query does not exist " +
+            "(query was: %s, %s)") % (self.model._meta.object_name,
+                args, kwargs))
+    raise self.model.MultipleObjectsReturned("get() returned more than one %s -- it returned %s! Lookup parameters were %s"
+            % (self.model._meta.object_name, num, kwargs))
+QuerySet.get = replacement_queryset_get
 
 import django.test.utils
 
