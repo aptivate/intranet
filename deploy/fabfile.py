@@ -17,10 +17,8 @@ env.project = project_settings.project_name
 env.project_dir = env.project
 
 # repository type can be "svn" or "git"
-env.repo_type = "svn"
-env.repository = 'https://svn.aptivate.org/svn/' + env.project + '/dev'
-env.svnuser = 'redmine'
-env.svnpass = 'redm1ne2010svn'
+env.repo_type = "git"
+env.repository = 'git://git@github.com:aptivate/intranet.git'
 
 env.django_dir = os.path.join('django', env.project)
 env.test_cmd = ' manage.py test -v0 ' + ' '.join(project_settings.django_apps)
