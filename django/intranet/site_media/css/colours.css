@@ -36,34 +36,60 @@ ul.tabs.level2 li.selected a
 	border-bottom-color: white;
 }
 
-th, table caption
+table.ruled > thead > tr > th,
+table.ruled > tbody > tr > th,
+table.ruled > caption
 {
 	border-color: #ccc;
 	background-color: #eee;
 }
 
-table caption
+table.ruled > caption
 {
 	border-top: 1px solid #ccc;
 }
 
-td
-{
-	border-color: #ddd;
-}
-
-tr.alt td
-{
-	background-color: #eee;
-}
-
-table.edit
+table.ruled
 {
 	border-color: #eee;
 }
 
-table.edit td
+table.ruled > tbody > tr > td
 {
 	border-color: #ddd;
-	background: #eee;
+	background: white;
+}
+
+table.ruled > tbody > tr.alt > td
+{
+	background-color: #eee;
+}
+
+table.ruled > tbody > tr.errors > th
+{
+	background-color: #fdd;
+}
+
+table.ruled > tbody > tr.errors > td 
+{
+	background-color: #fee;
+}
+
+table.ruled tr.errors td.fields-cell
+{
+	padding-right: 1em;
+}
+
+table.ruled tr.errors td.errors-cell
+{
+	border-left: 2px solid #daa;
+	padding-left: 1em;
+}
+
+table.edit tr.errors td.errors-cell ul.errorlist
+{
+	list-style-type: none;
+	-webkit-margin-before: 0;
+	-webkit-margin-after: 0;
+	-webkit-padding-start: 0px;
 }
