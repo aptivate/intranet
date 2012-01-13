@@ -101,8 +101,14 @@ def _manage_py(args, cwd=None, supress_output=False):
     if env['verbose']:
         print 'Executing manage command: %s' % ' '.join(manage_cmd)
     output_lines = []
-    popen = subprocess.Popen(manage_cmd, cwd=cwd, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT)
+    
+    try:
+        popen = subprocess.Popen(manage_cmd, cwd=cwd, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT)
+    except OSError as e:
+        print "Failed to execute command: %s: %s" % (manage_cmd, e)
+        raise e
+    
     for line in iter(popen.stdout.readline, ""):
         if env['verbose'] or not supress_output:
             print line,
