@@ -1,0 +1,149 @@
+[
+    {
+        "pk": 5,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "Data (external)"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "ATA Report"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "ATA Presentation"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "ATA Data"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "Paper (external)"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "Report (external)"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "documents.documenttype",
+        "fields": {
+            "name": "Policy (external)"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "documents.program",
+        "fields": {
+            "name": "Seeds"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "documents.program",
+        "fields": {
+            "name": "Soil"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "documents.program",
+        "fields": {
+            "name": "Co-ops"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "documents.program",
+        "fields": {
+            "name": "Input/Output Markets"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "documents.program",
+        "fields": {
+            "name": "Extension and Research"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "documents.program",
+        "fields": {
+            "name": "Maize"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "documents.program",
+        "fields": {
+            "name": "Wheat"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "documents.program",
+        "fields": {
+            "name": "Tef"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "documents.program",
+        "fields": {
+            "name": "Rice"
+        }
+    },
+    {
+        "pk": 10,
+        "model": "documents.program",
+        "fields": {
+            "name": "Pulses"
+        }
+    },
+    {
+        "pk": 11,
+        "model": "documents.program",
+        "fields": {
+            "name": "Oilseeds"
+        }
+    },
+    {
+        "pk": 12,
+        "model": "documents.program",
+        "fields": {
+            "name": "Gender"
+        }
+    },
+    {
+        "pk": 13,
+        "model": "documents.program",
+        "fields": {
+            "name": "Climate"
+        }
+    },
+    {
+        "pk": 14,
+        "model": "documents.program",
+        "fields": {
+            "name": "Technology"
+        }
+    }
+]
