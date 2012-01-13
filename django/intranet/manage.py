@@ -154,6 +154,38 @@ def replacement_queryset_get(self, *args, **kwargs):
             % (self.model._meta.object_name, num, kwargs))
 QuerySet.get = replacement_queryset_get
 
+from lib.monkeypatch import patch
+
+from django.forms.fields import FileField
+def replacement_to_python(original_function, self, data):
+    print "data = %s" % data
+    return original_function(self, data)
+# patch(FileField, 'to_python', replacement_to_python)
+
+from django.test.client import RequestFactory, MULTIPART_CONTENT, urlparse, \
+    FakePayload
+def replacement_post(original_function, self, path, data={},
+    content_type=MULTIPART_CONTENT, **extra):
+    """If the data doesn't have an items() method, then it's probably already
+    been converted to a string (encoded), and if we try again we'll call
+    the nonexistent items() method and fail, so just don't encode it at
+    all."""
+    if content_type == MULTIPART_CONTENT and getattr(data, 'items', None) is None:
+        parsed = urlparse(path)
+        r = {
+            'CONTENT_LENGTH': len(data),
+            'CONTENT_TYPE':   content_type,
+            'PATH_INFO':      self._get_path(parsed),
+            'QUERY_STRING':   parsed[4],
+            'REQUEST_METHOD': 'POST',
+            'wsgi.input':     FakePayload(data),
+        }
+        r.update(extra)
+        return self.request(**r)
+    else:
+        return original_function(self, path, data, content_type, **extra)
+# patch(RequestFactory, 'post', replacement_post)
+
 import django.test.utils
 
 original_test_setup = django.test.utils.setup_test_environment
