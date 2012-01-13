@@ -1,0 +1,50 @@
+<table class="edit ruled">
+	{% for line in fieldset %}
+		<tr class="{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% for field in line %} {{ field.field.name }}{% endfor %}">
+			<th>
+				{% for field in line %}
+					{{ field.label_tag }}
+				{% endfor %}
+			</th>
+			<td>
+				<table class="errors-box">
+					<tr>
+						<td class="fields-cell">
+							<table class="fields-box">
+								{% for field in line %}
+									<tr>
+										<td>
+											{% if field.is_checkbox %}
+												{{ field.field }}{{ field.label_tag }}
+											{% else %}
+												{% comment %}
+													{{ field.label_tag }}
+												{% endcomment %}
+												
+												{% if field.is_readonly %}
+													<p>{{ field.contents }}</p>
+												{% else %}
+													{{ field.field }}
+												{% endif %}
+											{% endif %}
+										</td>
+										{% if not line.fields|length_is:'1' and not field.is_readonly %}
+											<td class="errors-cell">
+												{{ field.errors }}
+											</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+							</table><!-- fields-box -->
+						</td>
+						{% if line.fields|length_is:'1' %}
+							<td class="errors-cell">
+								{{ line.errors }}
+					        </td>
+						{% endif %}
+					</tr>
+				</table><!-- errors-box -->
+			</td>
+		</tr>
+	{% endfor %}
+</table>
