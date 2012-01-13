@@ -18,7 +18,7 @@ env.project_dir = env.project
 
 # repository type can be "svn" or "git"
 env.repo_type = "git"
-env.repository = 'git://git@github.com:aptivate/intranet.git'
+env.repository = 'git://github.com/aptivate/intranet.git'
 
 env.django_dir = os.path.join('django', env.project)
 env.test_cmd = ' manage.py test -v0 ' + ' '.join(project_settings.django_apps)
@@ -68,14 +68,14 @@ def staging_test():
     env.project_dir = env.project + '_test'
     env.environment = 'staging_test'
     env.use_apache = False
-    env.hosts = ['fen-vz-' + project_settings.project_name]
+    env.hosts = ['fen-vz-atamis.fen.aptivate.org']
     _local_setup()
 
 
 def staging():
     """ use staging environment on remote host to demo to client"""
     env.environment = 'staging'
-    env.hosts = ['fen-vz-' + project_settings.project_name]
+    env.hosts = ['fen-vz-atamis.fen.aptivate.org']
     _local_setup()
 
 
