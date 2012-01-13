@@ -26,10 +26,10 @@ class BinderTest(TestCase):
         self.assertEqual("Home", main_menu[0].title)
         self.assertEqual("front_page", main_menu[0].url_name)
         self.assertEqual("Documents", main_menu[1].title)
-        self.assertEqual(documents.urls.urlpatterns[0].name,
+        self.assertEqual('admin:documents_document_changelist',
             main_menu[1].url_name)
         self.assertEqual("Users", main_menu[2].title)
-        self.assertEqual('/users', main_menu[2].url_name)
+        self.assertEqual('admin:auth_user_changelist', main_menu[2].url_name)
         
     def test_menu_tag_with_named_route(self):
         context = Context({'global':{'path':'/'}})
