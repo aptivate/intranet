@@ -29,7 +29,7 @@ os.environ[project_name.upper() + '_HOME'] = os.path.join('/var/django', project
 # we want the above, but to use a string we do
 import imp
 fp, pathname, desc = imp.find_module(os.path.join(project_dir, 'django',
-                                   project_name, 'settings')
+                                   project_name, 'settings'))
 try:
     settings = imp.load_module(project_name+'.settings', fp, pathname, desc)
 finally:
