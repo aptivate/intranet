@@ -105,7 +105,7 @@ def _manage_py(args, cwd=None, supress_output=False):
     try:
         popen = subprocess.Popen(manage_cmd, cwd=cwd, stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT)
-    except OSError as e:
+    except OSError, e:
         print "Failed to execute command: %s: %s" % (manage_cmd, e)
         raise e
     
