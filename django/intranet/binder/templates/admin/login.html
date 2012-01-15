@@ -17,7 +17,8 @@
 	<form method="post">
 		{% csrf_token %}
 		<input type="hidden" name="next" value="/" />
-		<table>
+		<input type="hidden" name="this_is_the_login_form" value="1" />
+		<table class="ruled">
 			<tr>
 				<th><label for="id_username">User name</label></th>
 				<td>{{ form.username }}</td>
