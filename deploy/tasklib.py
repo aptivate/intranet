@@ -25,6 +25,11 @@ import getpass
 import random
 
 try:
+    import localtasks
+except ImportError:
+    localtasks = None
+
+try:
     # For testing replacement routines for older python compatibility
     # raise ImportError()
     import subprocess
@@ -469,6 +474,9 @@ def deploy(environment=None):
     update_git_submodules()
     create_ve()
     update_db()
+    
+    if post_deploy in localtasks:
+        localtasks.post_deploy(environment)
 
 def patch_south():
     """ patch south to fix pydev errors """
