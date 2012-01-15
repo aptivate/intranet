@@ -85,4 +85,8 @@ def production():
     env.hosts = ['lin-' + project_settings.project_name + '.aptivate.org:48001']
     _local_setup()
 
-
+def deploy():
+    fablib.deploy()
+    require('tasks_bin', provided_by=env.valid_envs)
+    sudo_or_run(env.tasks_bin + ' post_deploy')
+    

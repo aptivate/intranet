@@ -1,4 +1,4 @@
-import os, stat, project_settings
+import sys, os, stat, project_settings
 
 def post_deploy(environment=None):
     sys.path.append(project_settings.django_dir)
