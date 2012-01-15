@@ -8,6 +8,7 @@ class DocumentAdmin(admin.ModelAdmin):
         urlpatterns = super(DocumentAdmin, self).get_urls()
         # print "patterns = %s" % urlpatterns
         # print "name = %s" % urlpatterns[0].name
+        # print "login template = %s" % admin.sites.site.login_template
         return urlpatterns
     
     """
