@@ -1,7 +1,8 @@
-import sys, os, stat, project_settings
+import sys, os, stat
+from tasklib import env
 
 def post_deploy(environment=None):
-    sys.path.append(project_settings.django_dir)
+    sys.path.append(env['django_dir'])
     import settings as django_settings
     if 'MEDIA_ROOT' in django_settings:
         if django_settings.MEDIA_ROOT is not None and \
