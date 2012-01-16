@@ -3,7 +3,7 @@ from tasklib import env
 
 def post_deploy(environment=None):
     sys.path.append(env['django_dir'])
-    sys.path.append(os.path.join(env['ve_dir'], 'lib', 'python2.6'))
+    sys.path.append(os.path.join(env['ve_dir'], 'lib', 'python2.6', 'site-packages'))
     import settings as django_settings
     
     if 'MEDIA_ROOT' in django_settings:
