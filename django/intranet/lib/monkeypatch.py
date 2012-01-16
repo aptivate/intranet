@@ -28,7 +28,7 @@ def patch(class_or_instance, method_name, replacement_function):
         curry(replacement_function, original_function))
 
 from django.core.handlers.base import BaseHandler
-def replacement_get_response(original_function, self, request):
+def get_response_with_exception_passthru(original_function, self, request):
     """
     Returns an HttpResponse object for the given HttpRequest. Unlike
     the original get_response, this does not catch exceptions.
@@ -108,7 +108,7 @@ def replacement_get_response(original_function, self, request):
     response = self.apply_response_fixes(request, response)
 
     return response
-# patch(BaseHandler, 'get_response', replacement_get_response) 
+patch(BaseHandler, 'get_response', get_response_with_exception_passthru) 
 
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
