@@ -129,7 +129,7 @@ form
 	margin: 0;
 }
 
-div.warning-message, div.success-message, div.error-message
+div.warning-message, div.success-message, div.error-message, ul.errorlist
 {
 	color: black;
 	padding: 0.5em;
@@ -138,20 +138,26 @@ div.warning-message, div.success-message, div.error-message
 
 div#warning-message
 {
-	background: #ffd;
 	border: 2px solid #fc8;
+	background: #ffd;
 }
 
 div.success-message
 {
-	background: #dfd;
 	border: 2px solid #8f8;
+	background: #dfd;
 }
 
-div.error-message
+div.error-message, ul.errorlist
 {
 	padding: 8px 8px 8px 40px;
+	border: 2px solid #fcc;
 	background: #fdd url(../images/warning.png) no-repeat 8px;
+}
+
+ul.errorlist
+{
+	list-style-type: none;
 }
 
 div.formError

@@ -88,8 +88,5 @@ table.ruled tr.errors td.errors-cell
 
 table.edit tr.errors td.errors-cell ul.errorlist
 {
-	list-style-type: none;
-	-webkit-margin-before: 0;
-	-webkit-margin-after: 0;
-	-webkit-padding-start: 0px;
+	margin: 0;
 }
