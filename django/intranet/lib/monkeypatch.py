@@ -27,7 +27,10 @@ def patch(class_or_instance, method_name, replacement_function):
     setattr(class_or_instance, method_name, 
         curry(replacement_function, original_function))
 
-from django.core.handlers.base import BaseHandler
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+from django.test.client import ClientHandler
 def get_response_with_exception_passthru(original_function, self, request):
     """
     Returns an HttpResponse object for the given HttpRequest. Unlike
@@ -108,10 +111,7 @@ def get_response_with_exception_passthru(original_function, self, request):
     response = self.apply_response_fixes(request, response)
 
     return response
-patch(BaseHandler, 'get_response', get_response_with_exception_passthru) 
-
-import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+patch(ClientHandler, 'get_response', get_response_with_exception_passthru) 
 
 from django.db.models.query import QuerySet
 def queryset_get_with_exception_detail(original_function, self, *args, **kwargs):
