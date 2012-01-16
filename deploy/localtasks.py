@@ -10,7 +10,8 @@ def post_deploy(environment=None):
     try:
         from settings import MEDIA_ROOT
         if MEDIA_ROOT is not None and MEDIA_ROOT != '':
-            os.mkdir(MEDIA_ROOT)
+            if not os.path.exists(MEDIA_ROOT):
+                os.mkdir(MEDIA_ROOT)
             os.chmod(MEDIA_ROOT, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
     except ImportError, e:
         # no MEDIA_ROOT? not a fatal error
