@@ -1,7 +1,10 @@
 from django.db import models
-
 from django.contrib.auth.models import User, get_hexdigest
-import documents.models
+
+class Program(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    def __unicode__(self):
+        return self.name
 
 # class UserProfile(models.Model):
 class IntranetUser(User):
@@ -23,7 +26,7 @@ class IntranetUser(User):
     full_name = models.CharField(max_length=100)
     job_title = models.CharField(max_length=100)
     sex = models.CharField(max_length=1, choices=SEX_CHOICE)
-    program = models.ForeignKey(documents.models.Program, blank=True, null=True)
+    program = models.ForeignKey(Program, blank=True, null=True)
     cell_phone = models.CharField(max_length=30)
     office_location = models.CharField(max_length=1, choices=OFFICE_LOCATIONS)
     photo = models.ImageField(upload_to='profile_photos')

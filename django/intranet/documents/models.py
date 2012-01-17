@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+import binder.models
 
 # http://djangosnippets.org/snippets/1054/
 
@@ -8,18 +8,13 @@ class DocumentType(models.Model):
     def __unicode__(self):
         return self.name
 
-class Program(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    def __unicode__(self):
-        return self.name
-
 class Document(models.Model):
     title = models.CharField(max_length=255, unique=True)
     document_type = models.ForeignKey(DocumentType)
-    programs = models.ManyToManyField(Program)
+    programs = models.ManyToManyField(binder.models.Program)
     file = models.FileField(upload_to='documents', blank=True)
     notes = models.TextField()
-    authors = models.ManyToManyField(User)
+    authors = models.ManyToManyField(binder.models.IntranetUser)
     created = models.DateTimeField(auto_now_add = True)
     hyperlink = models.URLField(blank=True)
     

@@ -107,4 +107,3 @@ class DocumentAdmin(admin.ModelAdmin):
 admin.site.register(models.Document, DocumentAdmin)
 
 admin.site.register(models.DocumentType, admin.ModelAdmin)
-admin.site.register(models.Program, admin.ModelAdmin)

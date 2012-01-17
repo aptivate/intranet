@@ -68,3 +68,4 @@ class IntranetUserAdmin(admin.ModelAdmin):
         return result
 
 admin.site.register(models.IntranetUser, IntranetUserAdmin)
+admin.site.register(models.Program, admin.ModelAdmin)
