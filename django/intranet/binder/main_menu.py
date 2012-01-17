@@ -20,5 +20,5 @@ class Menu:
 MAIN_MENU = Menu()
 MAIN_MENU.append("Home", 'front_page')
 MAIN_MENU.append("Documents", 'admin:documents_document_changelist')
-MAIN_MENU.append("Users", 'admin:auth_user_changelist')
+MAIN_MENU.append("Users", 'admin:binder_intranetuser_changelist')
 
