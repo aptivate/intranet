@@ -209,3 +209,24 @@ def post_with_string_data_support(original_function, self, path, data={},
     else:
         return original_function(self, path, data, content_type, **extra)
 patch(RequestFactory, 'post', post_with_string_data_support)
+
+from django.forms.models import ModelFormMetaclass
+def new_with_debugging(original_function, cls, name, bases, attrs):
+    from django.forms.forms import get_declared_fields
+    print 'cls = %s' % cls
+    print 'bases = %s' % bases
+    print 'attrs = %s' % attrs
+    print "declared_fields = %s" % get_declared_fields(bases, attrs, False)
+    return original_function(cls, name, bases, attrs)
+# patch(ModelFormMetaclass, '__new__', new_with_debugging)
+
+import django.contrib.admin.validation
+def check_formfield_with_debugging(original_function, cls, model, opts, label, field):
+    print 'checking %s.%s: base_fields = %s\n' % (cls.__name__, field,
+        getattr(cls.form, 'base_fields'))
+    return original_function(cls, model, opts, label, field)
+
+"""
+patch(django.contrib.admin.validation, 'check_formfield', 
+    check_formfield_with_debugging)
+"""
