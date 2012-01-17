@@ -13,4 +13,5 @@ reports/*
 /.settings
 django/intranet/admin-source
 django/intranet/django-source
+django/intranet/search_index
 django/intranet/uploads
