@@ -4,13 +4,15 @@ import django.contrib.auth.views
 
 import settings
 import lib.dictutils
+import haystack.urls
 import binder.views
 import documents.urls
+
 from django.contrib.auth.models import User
+from django.contrib import admin
 
 # Uncomment the next two lines to enable the admin:
 
-from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
@@ -33,4 +35,5 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^search/', include(haystack.urls)),
 )
