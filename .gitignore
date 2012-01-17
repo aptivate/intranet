@@ -12,4 +12,5 @@ reports/*
 /.metadata
 /.settings
 django/intranet/admin-source
+django/intranet/django-source
 django/intranet/uploads
