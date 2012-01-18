@@ -16,3 +16,4 @@ django/intranet/django-source
 django/intranet/search_index
 django/intranet/uploads
 doc
+*/.svn/tmp
