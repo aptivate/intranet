@@ -10,10 +10,10 @@
 
 {% block body %}
 	<form method="get" action=".">
-		<table>
+		<table class="ruled">
 			{{ form.as_table }}
 			<tr>
-				<td>&nbsp;</td>
+				<th>&nbsp;</th>
 				<td>
 					<input type="submit" value="Search">
 				</td>
@@ -23,13 +23,20 @@
 		{% if query %}
 			<h3>Results</h3>
 
-			{% for result in page.object_list %}
-				<p>
-					<a href="{{ result.object.get_absolute_url }}">{{ result.object.title }}</a>
-				</p>
-			{% empty %}
+			{% if page.object_list %}
+				<table class="ruled">
+				{% for result in page.object_list %}
+					<tr>
+						<th>{{ result.verbose_name }}</th>
+						<td>{{ result.pk }}</td>
+						<td><a href="{{ result.object.get_absolute_url }}">{{ result.title }}</a></td>
+						<td>{{ result.score }}</td>
+					</tr>
+				{% endfor %}
+				</table>
+			{% else %}
 				<p>No results found.</p>
-			{% endfor %}
+			{% endif %}
 
 			{% if page.has_previous or page.has_next %}
 				<div>

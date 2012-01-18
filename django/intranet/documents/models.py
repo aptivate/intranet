@@ -29,3 +29,13 @@ class Document(models.Model):
         if not self.file and not self.hyperlink:
             raise ValidationError('You must either attach a file ' +
                 'or provide a hyperlink')
+            
+    @models.permalink
+    def get_absolute_url(self):
+        """
+        from django.core.urlresolvers import reverse
+        url = reverse('admin:documents_document_change', [self.id])
+        print "reverse for %s = %s" % (self, url)
+        return url
+        """
+        return ('admin:documents_document_change', [str(self.id)])
