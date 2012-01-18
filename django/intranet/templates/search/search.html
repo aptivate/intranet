@@ -11,12 +11,15 @@
 {% block body %}
 	<form method="get" action=".">
 		<table class="ruled">
-			{{ form.as_table }}
 			<tr>
-				<th>&nbsp;</th>
-				<td>
-					<input type="submit" value="Search">
-				</td>
+				<th>Containing Text</th>
+				<th>Types</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td>{{ form.q }}</td>
+				<td class="search-models">{{ form.models }}</td>
+				<td><input type="submit" value="Search"></td>
 			</tr>
 		</table>
 
