@@ -3,3 +3,7 @@ mysql-python==1.2.3
 south==0.7.3
 django-haystack==1.2.6
 Whoosh==2.3.2
+python-magic==0.4.2
+# docx==0.1.2
+http://github.com/mikemaccana/python-docx/tarball/master
+# ooxml==0.2.1
