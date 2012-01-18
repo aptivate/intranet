@@ -1,15 +1,15 @@
 10
 
 dir
-7090
+7161
 https://svn.aptivate.org/svn/model_django_project/trunk/dev/deploy
 https://svn.aptivate.org/svn
 
 
 
-2012-01-05T11:30:54.740298Z
-7067
-martinb
+2012-01-16T18:01:50.134758Z
+7152
+hamish
 
 
 
@@ -100,33 +100,12 @@ file
 
 
 
-2012-01-09T11:32:03.857583Z
-fc82f49651891ec37e7f7df79036e1ef
-2012-01-05T11:30:54.740298Z
-7067
-martinb
+
+eebfb252aba490494a796bcb4e8d077f
+2012-01-16T18:01:50.134758Z
+7152
+hamish
 has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-17637
 
 pip_packages.txt
 file
@@ -168,10 +147,10 @@ file
 
 
 
-2012-01-09T11:32:03.857583Z
-e71f7b308406b7a1ecd41aa25536fabe
-2011-12-16T18:48:47.693873Z
-7011
+2012-01-18T12:20:41.636994Z
+af2aee308056fce3e97b2d77bef1609b
+2012-01-16T17:57:10.286136Z
+7151
 hamish
 
 
@@ -194,7 +173,7 @@ hamish
 
 
 
-14389
+14501
 
 tasks.py
 file
@@ -202,11 +181,11 @@ file
 
 
 
-2012-01-09T11:32:03.857583Z
-ad247bd28b5053c801d0d1442bc21282
-2011-11-23T18:30:01.607050Z
-6755
-martinb
+2012-01-18T12:20:41.636994Z
+bd94a17dc036637544ea8388b88ab626
+2012-01-16T17:57:10.286136Z
+7151
+hamish
 has-props
 
 
@@ -228,7 +207,7 @@ has-props
 
 
 
-5945
+5871
 
 project_settings.py
 file

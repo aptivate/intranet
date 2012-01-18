@@ -1,11 +1,9 @@
-import os, sys
+import os
 import getpass
 import time
-import shutil
 
 from fabric.api import *
-from fabric.contrib import files, console
-from fabric.contrib.files import exists
+from fabric.contrib import files
 from fabric import utils
 
 def _setup_path():
@@ -15,32 +13,37 @@ def _setup_path():
     # env.project_root    = os.path.join(env.home, env.project_subdir)
 
     # allow for the fabfile having set up some of these differently
+    if not env.has_key('use_sudo'):
+        env.use_sudo        = True
+    if not env.has_key('cvs_rsh'):
+        env.cvs_rsh         = 'CVS_RSH="ssh"'
     if not env.has_key('project_root'):
         env.project_root    = os.path.join(env.home, env.project_dir)
     if not env.has_key('vcs_root'):
         env.vcs_root        = os.path.join(env.project_root, 'dev')
     if not env.has_key('prev_root'):
-        env.prev_root        = os.path.join(env.project_root, 'previous')
+        env.prev_root       = os.path.join(env.project_root, 'previous')
     if not env.has_key('dump_dir'):
         env.dump_dir        = os.path.join(env.project_root, 'dbdumps')
     if not env.has_key('deploy_root'):
         env.deploy_root     = os.path.join(env.vcs_root, 'deploy')
-    env.tasks_bin = os.path.join(env.deploy_root, 'tasks.py')
-    if env.project_type == "django" and not env.has_key('django_dir'):
-        env.django_dir      = env.project
-    if env.project_type == "django" and not env.has_key('django_root'):
-        env.django_root     = os.path.join(env.vcs_root, env.django_dir)
+    if env.project_type == "django":
+        if not env.has_key('django_dir'):
+            env.django_dir      = env.project
+        if not env.has_key('django_root'):
+            env.django_root     = os.path.join(env.vcs_root, env.django_dir)
+    if not env.has_key('settings'):
+        env.settings        = '%(project)s.settings' % env
     if env.use_virtualenv:
         if not env.has_key('virtualenv_root'):
             env.virtualenv_root = os.path.join(env.django_root, '.ve')
         if not env.has_key('python_bin'):
-            env.python_bin      = os.path.join(env.virtualenv_root, 'bin', 'python2.6')
-    if not env.has_key('settings'):
-        env.settings        = '%(project)s.settings' % env
-    if not env.has_key('use_sudo'):
-        env.use_sudo = True
-    if not env.has_key('cvs_rsh'):
-        env.cvs_rsh = 'CVS_RSH="ssh"'
+            python26 = os.path.join('/', 'usr', 'bin', 'python2.6')
+            if os.path.exists(python26):
+                env.python_bin = python26
+            else:
+                env.python_bin = os.path.join('/', 'usr', 'bin', 'python')
+    env.tasks_bin = env.python_bin + ' ' + os.path.join(env.deploy_root, 'tasks.py')
 
 
 def _get_svn_user_and_pass():

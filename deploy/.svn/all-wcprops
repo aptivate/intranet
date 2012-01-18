@@ -1,7 +1,7 @@
 K 25
 svn:wc:ra_dav:version-url
 V 56
-/svn/!svn/ver/7067/model_django_project/trunk/dev/deploy
+/svn/!svn/ver/7152/model_django_project/trunk/dev/deploy
 END
 fabfile.py
 K 25
@@ -19,7 +19,7 @@ tasklib.py
 K 25
 svn:wc:ra_dav:version-url
 V 67
-/svn/!svn/ver/7067/model_django_project/trunk/dev/deploy/tasklib.py
+/svn/!svn/ver/7152/model_django_project/trunk/dev/deploy/tasklib.py
 END
 pip_packages.txt
 K 25
@@ -31,13 +31,13 @@ fablib.py
 K 25
 svn:wc:ra_dav:version-url
 V 66
-/svn/!svn/ver/7011/model_django_project/trunk/dev/deploy/fablib.py
+/svn/!svn/ver/7151/model_django_project/trunk/dev/deploy/fablib.py
 END
 tasks.py
 K 25
 svn:wc:ra_dav:version-url
 V 65
-/svn/!svn/ver/6755/model_django_project/trunk/dev/deploy/tasks.py
+/svn/!svn/ver/7151/model_django_project/trunk/dev/deploy/tasks.py
 END
 project_settings.py
 K 25

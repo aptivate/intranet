@@ -46,15 +46,11 @@ function in tasklib.py (or localtasks.py) to see what arguments the
 function accepts.
 """
 
-import os, sys
+import sys
 import getopt
-import getpass
 import inspect
 
 import tasklib
-
-# import per-project settings
-import project_settings
 
 # are there any local tasks for this project?
 try:
@@ -176,10 +172,10 @@ def main():
         if o in ("-d", "--description"):
             describe_task(args)
     # process arguments - just call the function with that name
+    tasklib.env['verbose'] = verbose
     tasklib._setup_paths()
     if (hasattr(localtasks, '_setup_paths')):
         localtasks._setup_paths()
-    tasklib.env['verbose'] = verbose
     if len(args) == 0:
         print_help_text()
     for arg in args:
