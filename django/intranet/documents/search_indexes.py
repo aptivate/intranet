@@ -1,7 +1,10 @@
 import datetime
 import docx
+import subprocess
 
 from django.db.models import signals
+from django.core.files.uploadedfile import TemporaryUploadedFile, \
+    InMemoryUploadedFile
 from haystack.indexes import *
 from haystack import site
 from magic import Magic
@@ -23,7 +26,12 @@ class DocumentIndex(RealTimeSearchIndex):
         """Before allowing the model to be saved, we should check that
         we can index the document properly."""
         super(DocumentIndex, self)._setup_save(model)
-        signals.pre_save.connect(self.test_object, sender=model)
+        """
+        signals.pre_save.connect(self.test_object, sender=model,
+            dispatch_uid="document_index_on_validate_document")
+        """
+        Document.on_validate.connect(self.test_object, sender=model,
+            dispatch_uid="document_index_on_validate_document")
 
     def test_object(self, instance, **kwargs):
         """
@@ -51,7 +59,7 @@ class DocumentIndex(RealTimeSearchIndex):
                 document.file.open()
                 f = document.file.file
                 magic = Magic(mime=True)
-                mime = magic.from_buffer(f.read(1024))
+                mime = magic.from_buffer(f.read())
                 f.seek(0) # reset to beginning
             
                 if mime == 'application/zip':
@@ -59,6 +67,28 @@ class DocumentIndex(RealTimeSearchIndex):
                     document = docx.opendocx(document.file)
                     paratextlist = docx.getdocumenttext(document)
                     return "\n\n".join(paratextlist)
+                elif True or mime == 'application/msword':
+                    if isinstance(f, InMemoryUploadedFile):
+                        tmp = TemporaryUploadedFile(name=f.name,
+                            content_type=f.content_type, size=f.size,
+                            charset=f.charset)
+                        tmp.write(f.read())
+                        f.close()
+                        f = tmp
+                        
+                    if isinstance(f, TemporaryUploadedFile):
+                        path = f.temporary_file_path()
+                    else:
+                        path = f.name
+                    
+                    process = subprocess.Popen(['antiword', path],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    (out, err) = process.communicate()
+                    if err != '':
+                        err = err.replace(path, document.file.name)
+                        raise Exception('Failed to convert Word document: %s' %
+                            err);
+                    return out
                 else:
                     data = f.read(1<<26) # 64 MB
                     return data

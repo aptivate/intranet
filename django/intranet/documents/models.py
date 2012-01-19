@@ -1,5 +1,7 @@
-from django.db import models
 import binder.models
+import django.dispatch
+
+from django.db import models
 
 # http://djangosnippets.org/snippets/1054/
 
@@ -17,18 +19,34 @@ class Document(models.Model):
     authors = models.ManyToManyField(binder.models.IntranetUser)
     created = models.DateTimeField(auto_now_add = True)
     hyperlink = models.URLField(blank=True)
+
+    on_validate = django.dispatch.Signal(providing_args=['instance'])    
     
     def __unicode__(self):
-        return self.title
+        return "Document<%s>" % self.title
+    
+    def get_authors(self):
+        return ', '.join([u.full_name for u in self.authors.all()])
+    get_authors.short_description = 'Authors'
 
     def clean(self):
-        models.Model.clean(self)
+        print "Document.clean starting"
         
         from django.core.exceptions import ValidationError
+        # raise ValidationError("early validation error")
+        
+        models.Model.clean(self)
         
         if not self.file and not self.hyperlink:
             raise ValidationError('You must either attach a file ' +
                 'or provide a hyperlink')
+        
+        try:
+            self.on_validate.send(sender=Document, instance=self)
+        except Exception as e:
+            raise ValidationError(e)    
+
+        print "Document.clean finished"
             
     @models.permalink
     def get_absolute_url(self):
