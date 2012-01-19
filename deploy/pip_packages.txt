@@ -9,3 +9,4 @@ lxml==2.3.3
 http://github.com/mikemaccana/python-docx/tarball/master
 # ooxml==0.2.1
 PIL==1.1.7
+pdfminer==20110515
