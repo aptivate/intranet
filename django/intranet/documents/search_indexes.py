@@ -93,7 +93,7 @@ class DocumentIndex(RealTimeSearchIndex):
                     
                     try:
                         process = self.safe_popen('antiword', path)
-                    except (OSError, IOError) as e:
+                    except Exception as e:
                         raise Exception('Failed to convert Word document: %s' %
                             e);
                         
