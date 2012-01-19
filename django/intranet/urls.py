@@ -1,5 +1,3 @@
-from django.conf.urls.defaults import patterns, include, url
-
 import django.contrib.auth.views
 
 import settings
@@ -8,6 +6,8 @@ import haystack.urls
 import binder.views
 import documents.urls
 
+from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls.static import static
 from django.contrib.auth.models import User
 from django.contrib import admin
 
@@ -36,4 +36,5 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', include(haystack.urls)),
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
