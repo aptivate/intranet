@@ -77,7 +77,7 @@ class DocumentIndex(RealTimeSearchIndex):
                     document = docx.opendocx(document.file)
                     paratextlist = docx.getdocumenttext(document)
                     return "\n\n".join(paratextlist)
-                elif True or mime == 'application/msword':
+                elif mime == 'application/msword':
                     if isinstance(f, InMemoryUploadedFile):
                         tmp = TemporaryUploadedFile(name=f.name,
                             content_type=f.content_type, size=f.size,
@@ -104,8 +104,10 @@ class DocumentIndex(RealTimeSearchIndex):
                             err);
                     return out
                 else:
-                    data = f.read(1<<26) # 64 MB
-                    return data
+                    raise Exception("Don't know how to index %s documents" %
+                        mime)
+                    # data = f.read(1<<26) # 64 MB
+                    # return data
             finally:
                 if f is not None:
                     f.close()
