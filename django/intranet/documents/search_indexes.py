@@ -72,7 +72,7 @@ class DocumentIndex(RealTimeSearchIndex):
                 mime = magic.from_buffer(f.read())
                 f.seek(0) # reset to beginning
             
-                if mime == 'application/zip':
+                if mime == 'application/zip' or mime == 'application/x-zip':
                     # is it a DOCX file?
                     document = docx.opendocx(document.file)
                     paratextlist = docx.getdocumenttext(document)
