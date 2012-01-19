@@ -226,6 +226,28 @@ def check_formfield_with_debugging(original_function, cls, model, opts, label, f
         getattr(cls.form, 'base_fields'))
     return original_function(cls, model, opts, label, field)
 
+from django.forms.models import BaseModelForm
+def is_valid_with_debugging(original_function, self):
+    print "is_valid: errors before = %s" % self._errors
+    print "is_bound = %s" % self.is_bound
+    print "self.empty_permitted = %s" % self.empty_permitted 
+    print "self.has_changed = %s" % self.has_changed()
+    ret = original_function(self)
+    print "is_valid = %s" % ret
+    print "is_valid: errors after = %s" % self._errors
+    return ret
+# patch(BaseModelForm, 'is_valid', is_valid_with_debugging)
+
+def post_clean(original_function, self):
+    print "post_clean: instance = %s" % self.instance
+    return original_function(self)
+# patch(BaseModelForm, '_post_clean', post_clean)
+
+def update_errors(original_function, self, message_dict):
+    print "update_errors: %s" % message_dict
+    return original_function(self, message_dict)
+# patch(BaseModelForm, '_update_errors', update_errors)
+
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
     check_formfield_with_debugging)
