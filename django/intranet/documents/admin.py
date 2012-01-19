@@ -68,6 +68,8 @@ class AdminFileWidgetWithSize(admin.widgets.AdminFileWidget):
         return mark_safe(template % substitutions)
 
 class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('title', models.Document.get_authors)
+    
     formfield_overrides = {
         django_fields.URLField: {'widget': URLFieldWidgetWithLink},
         django_fields.FileField: {'widget': AdminFileWidgetWithSize},
