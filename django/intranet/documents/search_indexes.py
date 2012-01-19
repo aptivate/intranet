@@ -42,6 +42,16 @@ class DocumentIndex(RealTimeSearchIndex):
         if self.should_update(instance, **kwargs):
             self.prepare_text(instance)
 
+    def safe_popen(self, command, *args):
+        cmd_with_args = [command]
+        cmd_with_args.extend(args)
+        
+        try:
+            return subprocess.Popen(cmd_with_args, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+        except (OSError, IOError) as e:
+            raise Exception('%s: %s' % (command, e))
+
     def prepare_text(self, document):
         """
         print "file = %s" % dir(document.file)
@@ -81,8 +91,12 @@ class DocumentIndex(RealTimeSearchIndex):
                     else:
                         path = f.name
                     
-                    process = subprocess.Popen(['antiword', path],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    try:
+                        process = self.safe_popen('antiword', path)
+                    except (OSError, IOError) as e:
+                        raise Exception('Failed to convert Word document: %s' %
+                            e);
+                        
                     (out, err) = process.communicate()
                     if err != '':
                         err = err.replace(path, document.file.name)
