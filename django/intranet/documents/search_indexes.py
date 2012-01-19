@@ -40,7 +40,11 @@ class DocumentIndex(RealTimeSearchIndex):
         """
         # Check to make sure we want to index this first.
         if self.should_update(instance, **kwargs):
-            self.prepare_text(instance)
+            try:
+                self.prepare_text(instance)
+            except Exception as e:
+                from django.core.exceptions import ValidationError
+                raise ValidationError({'file': e})
 
     def safe_popen(self, command, *args):
         cmd_with_args = [command]
