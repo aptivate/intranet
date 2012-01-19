@@ -16,3 +16,14 @@ def post_deploy(environment=None):
     except ImportError, e:
         # no MEDIA_ROOT? not a fatal error
         print "No MEDIA_ROOT found: %s" % e
+
+    try:
+        from settings import HAYSTACK_WHOOSH_PATH
+        if HAYSTACK_WHOOSH_PATH is not None and HAYSTACK_WHOOSH_PATH != '':
+            if not os.path.exists(HAYSTACK_WHOOSH_PATH):
+                os.mkdir(HAYSTACK_WHOOSH_PATH)
+            os.chmod(HAYSTACK_WHOOSH_PATH, stat.S_IRWXU | stat.S_IRWXG | 
+                stat.S_IRWXO)
+    except ImportError, e:
+        # no HAYSTACK_WHOOSH_PATH? not a fatal error
+        print "No HAYSTACK_WHOOSH_PATH found: %s" % e
