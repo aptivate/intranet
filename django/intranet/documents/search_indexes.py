@@ -1,6 +1,7 @@
 import datetime
 import docx
 import subprocess
+import os
 
 from django.db.models import signals
 from django.core.files.uploadedfile import TemporaryUploadedFile, \
@@ -9,6 +10,7 @@ from haystack.indexes import *
 from haystack import site
 from magic import Magic
 from StringIO import StringIO
+from zipfile import ZipFile
 
 from models import Document
 
@@ -68,15 +70,59 @@ class DocumentIndex(RealTimeSearchIndex):
                 from django.core.exceptions import ValidationError
                 raise ValidationError({'file': e})
 
-    def safe_popen(self, command, *args):
-        cmd_with_args = [command]
-        cmd_with_args.extend(args)
+    def safe_popen(self, cmd_with_args, *additional_args):
+        cmd_with_args.extend(additional_args)
         
         try:
             return subprocess.Popen(cmd_with_args, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE)
         except (OSError, IOError) as e:
-            raise Exception('%s: %s' % (command, e))
+            raise Exception('%s: %s' % (cmd_with_args, e))
+    
+    def ensure_saved(self, file):
+        """This may create a temporary file, which will be deleted when
+        it's closed, so always close() it but only when you've finished!"""
+        
+        if isinstance(file, InMemoryUploadedFile):
+            print "Writing %s to disk (%d bytes)" % (file, file.size)
+            tmp = TemporaryUploadedFile(name=file.name,
+                content_type=file.content_type, size=file.size,
+                charset=file.charset)
+            file.seek(0)
+            buf = file.read()
+            tmp.write(buf)
+            print "Wrote %d bytes" % len(buf)
+            tmp.flush()
+        else:
+            tmp = file
+            
+        if isinstance(tmp, TemporaryUploadedFile):
+            path = tmp.temporary_file_path()
+        else:
+            path = tmp.name
+        
+        return (tmp, path)
+
+    def extract_text_using_tool(self, file, tool, format_name, original_name):
+        (tmp, path) = self.ensure_saved(file)
+
+        try:         
+            try:
+                process = self.safe_popen(tool, path)
+            except Exception as e:
+                raise Exception('Failed to convert %s document: %s' % 
+                    (format_name, e));
+                
+            (out, err) = process.communicate()
+            if err != '' and err != "Using ODF/OOXML parser.\n":
+                # os.system("ls -la /tmp")
+                # err = err.replace(path, original_name)
+                raise Exception('Failed to convert %s document: %s' % 
+                    (format_name, err));
+        finally:
+            tmp.close()
+
+        return out
 
     def prepare_text(self, document):
         """
@@ -101,36 +147,29 @@ class DocumentIndex(RealTimeSearchIndex):
             f.seek(0) # reset to beginning
         
             if mime == 'application/zip' or mime == 'application/x-zip':
-                # is it a DOCX file?
-                document = docx.opendocx(document.file)
-                paratextlist = docx.getdocumenttext(document)
-                return "\n\n".join(paratextlist)
-            elif mime == 'application/msword':
-                if isinstance(f, InMemoryUploadedFile):
-                    tmp = TemporaryUploadedFile(name=f.name,
-                        content_type=f.content_type, size=f.size,
-                        charset=f.charset)
-                    tmp.write(f.read())
-                    f.close()
-                    f = tmp
-                    
-                if isinstance(f, TemporaryUploadedFile):
-                    path = f.temporary_file_path()
-                else:
-                    path = f.name
+                # is it an OpenOffice file?
+                zip = ZipFile(document.file, 'r')
+                names = zip.namelist()
                 
-                try:
-                    process = self.safe_popen('antiword', path)
-                except Exception as e:
-                    raise Exception('Failed to convert Word document: %s' %
-                        e);
-                    
-                (out, err) = process.communicate()
-                if err != '':
-                    err = err.replace(path, document.file.name)
-                    raise Exception('Failed to convert Word document: %s' %
-                        err);
-                return out
+                if 'word/document.xml' in names:
+                    # looks like a Word (DOCX) file
+                    document = docx.opendocx(document.file)
+                    paratextlist = docx.getdocumenttext(document)
+                    return "\n\n".join(paratextlist)
+                
+                if 'ppt/presentation.xml' in names:
+                    # looks like a PowerPoint (PPTX) file
+                    from settings import DOCTOTEXT_PATH
+                    return self.extract_text_using_tool(f, 
+                        ['sh', DOCTOTEXT_PATH], 'PowerPoint XML',
+                        document.file.name)
+                
+                raise Exception("Don't know how to index a ZIP file")
+            
+            elif mime == 'application/msword':
+                return self.extract_text_using_tool(f, ['antiword'], 'Word',
+                    document.file.name)
+
             elif mime == 'application/pdf':
                 rsrcmgr = PDFResourceManager(caching=True)
                 outfp = StringIO()
@@ -139,6 +178,7 @@ class DocumentIndex(RealTimeSearchIndex):
                 process_pdf(rsrcmgr, device, f, caching=True,
                     check_extractable=False)
                 return outfp.getvalue()
+            
             else:
                 raise Exception("Don't know how to index %s documents" %
                     mime)
