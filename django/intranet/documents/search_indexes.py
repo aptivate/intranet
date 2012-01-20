@@ -138,9 +138,10 @@ class DocumentIndex(RealTimeSearchIndex):
 
         if document.file is None:
             return
+
+        document.file.open()
         
         try:
-            document.file.open()
             f = document.file.file
             magic = Magic(mime=True)
             mime = magic.from_buffer(f.read())
@@ -157,8 +158,9 @@ class DocumentIndex(RealTimeSearchIndex):
                     paratextlist = docx.getdocumenttext(document)
                     return "\n\n".join(paratextlist)
                 
-                if 'ppt/presentation.xml' in names:
-                    # looks like a PowerPoint (PPTX) file
+                if 'ppt/presentation.xml' in names or \
+                    'xl/workbook.xml' in names:
+                    # looks like a PowerPoint (PPTX) or Excel (XLSX) file
                     from settings import DOCTOTEXT_PATH
                     return self.extract_text_using_tool(f, 
                         ['sh', DOCTOTEXT_PATH], 'PowerPoint XML',
