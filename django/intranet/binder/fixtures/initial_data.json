@@ -4,7 +4,53 @@
         "model": "auth.group",
         "fields": {
             "name": "Manager",
-            "permissions": []
+            "permissions": [
+                [
+                    "add_intranetuser",
+                    "binder",
+                    "intranetuser"
+                ],
+                [
+                    "change_intranetuser",
+                    "binder",
+                    "intranetuser"
+                ],
+                [
+                    "add_program",
+                    "binder",
+                    "program"
+                ],
+                [
+                    "change_program",
+                    "binder",
+                    "program"
+                ],
+                [
+                    "add_document",
+                    "documents",
+                    "document"
+                ],
+                [
+                    "change_document",
+                    "documents",
+                    "document"
+                ],
+                [
+                    "delete_document",
+                    "documents",
+                    "document"
+                ],
+                [
+                    "add_documenttype",
+                    "documents",
+                    "documenttype"
+                ],
+                [
+                    "change_documenttype",
+                    "documents",
+                    "documenttype"
+                ]
+            ]
         }
     },
     {
@@ -20,11 +66,6 @@
                 ],
                 [
                     "change_document",
-                    "documents",
-                    "document"
-                ],
-                [
-                    "delete_document",
                     "documents",
                     "document"
                 ]
@@ -144,5 +185,5 @@
         "fields": {
             "name": "Technology"
         }
-    }    
+    }
 ]
