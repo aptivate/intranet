@@ -5,6 +5,7 @@
 		<title>{{ global.app_title }} | {% block title %}{% endblock %}</title>
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/global.css" />
 		<link rel="stylesheet" href="{{ STATIC_URL }}css/colours.css" />
+		{% block extrastyle %}{% endblock %}
 	</head>
 	<body>
 		<h1>{{ global.app_title }}</h1>
