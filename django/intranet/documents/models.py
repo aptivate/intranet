@@ -60,4 +60,5 @@ class Document(models.Model):
         print "reverse for %s = %s" % (self, url)
         return url
         """
-        return ('admin:documents_document_change', [str(self.id)])
+        # return ('admin:documents_document_change', [str(self.id)])
+        return ('admin:documents_document_readonly', [str(self.id)])
