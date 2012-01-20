@@ -197,3 +197,8 @@ li.search-box ul
 	display: inline;
 	padding: 0;
 }
+
+table.fields-box p /* read-only field */
+{
+	margin: 0;
+}
