@@ -50,15 +50,24 @@ if update_ve or envtime < envspec or envreqs < envspec:
 
 go_to_ve()
 
-from lib.monkeypatch import patch
-
 # run django
-from django.core.management import execute_manager
+from django.core.management import setup_environ, ManagementUtility
+
 try:
     import settings # Assumed to be in the same directory.
 except ImportError as e:
     sys.stderr.write("Error: Can't find the file 'settings.py' in the directory containing %r. It appears you've customized things.\nYou'll have to run django-admin.py, passing it your settings module.\n(If the file settings.py does indeed exist, it's causing an ImportError somehow.)\n%s\n" % (__file__, e))
     sys.exit(1)
+
+def execute_manager(settings_mod, argv=None):
+    """
+    Like execute_from_command_line(), but for use by manage.py, a
+    project-specific django-admin.py utility.
+    """
+    setup_environ(settings_mod)
+    from lib.monkeypatch import patch
+    utility = ManagementUtility(argv)
+    utility.execute()
 
 if __name__ == "__main__":
     execute_manager(settings)
