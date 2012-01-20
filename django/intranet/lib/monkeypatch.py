@@ -135,7 +135,7 @@ patch(QuerySet, 'get', queryset_get_with_exception_detail)
 
 from django.forms.fields import FileField
 def to_python_with_debugging(original_function, self, data):
-    print "data = %s" % data
+    # print "data = %s" % data
     return original_function(self, data)
 patch(FileField, 'to_python', to_python_with_debugging)
 
@@ -281,7 +281,9 @@ def full_clean_with_debugging(original_function, self, exclude=None):
 def post_clean_with_simpler_validation(original_function, self):
     opts = self._meta
     # Update the model instance with self.cleaned_data.
+    # print "construct_instance with password = %s" % self.cleaned_data.get('password')
     self.instance = construct_instance(self, self.instance, opts.fields, opts.exclude)
+    # print "constructed instance with password = %s" % self.instance.password
 
     exclude = self._get_validation_exclusions()
 
@@ -302,6 +304,18 @@ def post_clean_with_simpler_validation(original_function, self):
     except ValidationError, e:
         self._update_errors(e.update_error_dict(None))
 patch(BaseModelForm, '_post_clean', post_clean_with_simpler_validation)
+
+from django.forms import BaseForm
+def clean_form_with_field_errors(original_function, self):
+    try:
+        self.cleaned_data = self.clean()
+    except ValidationError, e:
+        if hasattr(e, 'message_dict'):
+            for field, error_strings in e.message_dict.items():
+                self._errors[field] = self.error_class(error_strings)
+        else:
+            self._errors[NON_FIELD_ERRORS] = self.error_class(e.messages)
+patch(BaseForm, '_clean_form', clean_form_with_field_errors)
 
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
