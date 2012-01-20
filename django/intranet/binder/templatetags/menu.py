@@ -15,9 +15,11 @@ def menu_item(context, uri_or_name, label):
     if context['global']['path'] == href:
         attributes['class'] = 'selected'
     
+    element = 'td'
+    
     attributes = ['%s="%s"' % (html.escape(k), html.escape(v))
         for k, v in attributes.iteritems()]
     attributes = " ".join(attributes)
     
-    return '<li %s><a href="%s">%s</a></li>' % (attributes,
-        html.escape(href), html.escape(label))
+    return '<%s %s><a href="%s">%s</a></%s>' % (element, attributes,
+        html.escape(href), html.escape(label), element)

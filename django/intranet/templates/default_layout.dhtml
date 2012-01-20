@@ -10,17 +10,31 @@
 	<body>
 		<h1>{{ global.app_title }}</h1>
 		
-		<ul class="main_menu tabs level1">
-			{% for m in global.main_menu %}
-				{% menu_item m.url_name m.title %}
-			{% endfor %}
+		<table class="main_menu tabs level1">
+			<tr>
+				{% for m in global.main_menu %}
+					{% menu_item m.url_name m.title %}
+				{% endfor %}
+				
+				{% if user.username %}
+					{% menu_item 'logout' 'Log out' %}
+				{% else %}
+					{% menu_item 'login' 'Log in' %}
+				{% endif %}
+				
+				<td class="padding"></td>
 
-			{% if user.username %}
-				{% menu_item 'logout' 'Log out' %}
-			{% else %}
-				{% menu_item 'login' 'Log in' %}
-			{% endif %}
-		</ul>
+				<td class="search-box">
+					<form method="get" action="{% url haystack_search %}">
+						{% comment %}<span class="search-for">Search for:</span>{% endcomment %}
+						<span class="search-input">{{ global.search.q }}</span>
+						{% comment %}<span class="search-models">{{ global.search.models }}</span>{% endcomment %}
+						<span class="search-button"><input type="submit" 
+							value="Search"></span>
+					</form>
+				</td>
+			</tr>
+		</table>
 		
 		<h2>{% block heading %}{% endblock %}</h2>
 		

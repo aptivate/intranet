@@ -3,26 +3,47 @@ h1
 	color: black;
 }
 
-ul.tabs.level1
+.tabs.level1
 {
-	background-color: #ddd;
+	background: white url(/static/admin/img/admin/nav-bg-reverse.gif) 0 -10px repeat-x;
 }
 
-h1, ul.tabs.level1 li a
+h1, .tabs.level1 li a, .tabs.level1 td
 {
 	background-color: #ccc;
 }
 
+.tabs.level1 li a, .tabs.level1 td
+{
+	border: 1px outset #eee;
+	border-bottom: 1px solid black;
+}
+
+table.tabs.level1 td.padding, table.tabs.level1 td.padding:hover
+{
+	background-color: inherit;
+	border-style: inherit;
+} 
+
 ul.tabs.level1 li.selected a,
-ul.tabs.level1 li a:hover,
+table.tabs.level1 td.selected,
+ul.tabs.level1 li.selected:hover a,
+table.tabs.level1 td.selected:hover,
 ul.tabs.level2
 {
 	background-color: white;
 }
 
-ul.tabs.level1 li.selected a
+ul.tabs.level1 li a:hover,
+table.tabs.level1 td:hover
 {
-	border-bottom-color: white;
+	background-color: #ddd;
+}
+
+ul.tabs.level1 li.selected a,
+table.tabs.level1 td.selected
+{
+	border-bottom: none;
 }
 
 ul.tabs.level2 li a

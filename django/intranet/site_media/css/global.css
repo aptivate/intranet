@@ -7,14 +7,14 @@ h1
 	border-color: black;
 }
 
-ul.tabs
+.tabs
 {
 	margin: 0;
 	border-bottom: 1px solid black;
 	list-style: none;
 }
 
-ul.tabs li
+.tabs li
 {
 	display: inline;
 	margin: 0;
@@ -23,7 +23,20 @@ ul.tabs li
 	top: 1px;
 }
 
-ul.tabs li a
+.tabs td
+{
+	white-space: nowrap;
+	position: relative;
+	top: 1px;
+}
+
+.tabs td.padding
+{
+	border: none;
+	width: 100%;
+}
+
+ul.tabs li a, table.tabs td
 {
 	margin: 0;
 	border: 1px solid black;
@@ -32,11 +45,11 @@ ul.tabs li a
 	color: black;
 }
 
-ul.tabs li a:hover
+.tabs a:hover
 {
 }
 
-ul.tabs li.selected a
+.tabs .selected a
 {
 }
 
@@ -45,28 +58,34 @@ ul.tabs.level1
 	padding: 1em 10px 0.5em;
 }
 
-ul.tabs.level1 li a
+table.tabs.level1
+{
+	padding: 0.5em 0.5em 0;
+	border-spacing: 0.5em 0;
+}
+
+.tabs.level1 a
 {
 	padding: 0.5em 1em;
 }
 
-ul.tabs.level2
+.tabs.level2
 {
 	padding: 1em 10px 0.2em;
 	font-size: small;
 }
 
-ul.tabs.level2 li a
+.tabs.level2 a
 {
 	padding: 0.2em 0.4em;
 }
 
-ul.tabs.level2 li a:hover
+.tabs.level2 a:hover
 {
 	background-color: white;
 }
 
-ul.tabs.level2 li.selected a
+.tabs.level2 .selected a
 {
 	background-color: white;
 	border-bottom: 1px solid white;
@@ -170,4 +189,11 @@ div.formError
 div.error-message, div.formError
 {
 	border: 2px solid #fbb;
+}
+
+li.search-box form,
+li.search-box ul
+{
+	display: inline;
+	padding: 0;
 }
