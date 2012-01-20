@@ -33,12 +33,66 @@ import models
 from django import forms
 from django.contrib import admin
 from django.forms import ModelForm
+from django.forms.util import flatatt as attributes_to_str
+from django.forms.widgets import ClearableFileInput, CheckboxInput
+from django.template.defaultfilters import filesizeformat
+from django.utils.encoding import force_unicode
+from django.utils.html import escape, conditional_escape
+from django.utils.safestring import mark_safe
+
 # from django.utils.decorators import method_decorator
 # from django.views.decorators.csrf import csrf_protect
 
 # csrf_protect_m = method_decorator(csrf_protect)
 # from django.db import transaction
 # from models import IntranetUser
+
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+
+class RelatedFieldWithoutAddLink(RelatedFieldWidgetWrapper):
+    def __init__(self, widget, rel, admin_site, can_add_related=None):
+        RelatedFieldWidgetWrapper.__init__(self, widget, rel, admin_site,
+            can_add_related=False)
+
+class AdminFileWidgetWithSize(admin.widgets.AdminFileWidget):
+    template_with_initial = u'%(initial_text)s: %(initial)s (%(size)s) %(clear_template)s<br />%(input_text)s: %(input)s'
+
+    def render(self, name, value, attrs=None):
+        substitutions = {
+            'initial_text': self.initial_text,
+            'input_text': self.input_text,
+            'clear_template': '',
+            'clear_checkbox_label': self.clear_checkbox_label,
+        }
+        template = u'%(input)s'
+        substitutions['input'] = super(ClearableFileInput, self).render(name, value, attrs)
+
+        if value and hasattr(value, "url"):
+            template = self.template_with_initial
+            substitutions['size'] = filesizeformat(value.size)
+            substitutions['initial'] = (u'<a href="%s">%s</a>'
+                                        % (escape(value.url),
+                                           escape(force_unicode(value))))
+            if not self.is_required:
+                checkbox_name = self.clear_checkbox_name(name)
+                checkbox_id = self.clear_checkbox_id(checkbox_name)
+                substitutions['clear_checkbox_name'] = conditional_escape(checkbox_name)
+                substitutions['clear_checkbox_id'] = conditional_escape(checkbox_id)
+                substitutions['clear'] = CheckboxInput().render(checkbox_name, False, attrs={'id': checkbox_id})
+                substitutions['clear_template'] = self.template_with_clear % substitutions
+        
+        return mark_safe(template % substitutions)
+
+class URLFieldWidgetWithLink(admin.widgets.AdminURLFieldWidget):
+    def render(self, name, value, attrs=None):
+        html = admin.widgets.AdminURLFieldWidget.render(self, name, value,
+            attrs=attrs)
+
+        if value is not None:
+            final_attrs = dict(href=value, target='_blank')
+            html += " <a %s>(open)</a>" % attributes_to_str(final_attrs)
+        
+        return mark_safe(html)
 
 class IntranetUserForm(ModelForm):
     class Meta:
@@ -47,24 +101,68 @@ class IntranetUserForm(ModelForm):
     password1 = forms.CharField(required=False, label="New password")
     password2 = forms.CharField(required=False, label="Confirm new password")
     
+    COMPLETE_BOTH = 'You must complete both password boxes to set or ' + \
+        'change the password'
+    
     def clean(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
         
-        if password1 and password2 and password1 == password2:
-            self.cleaned_data['password'] = \
-                self.instance.hash_password(password1)
+        from django.core.exceptions import ValidationError
+        
+        if password2 and not password1:
+            raise ValidationError({'password1': [self.COMPLETE_BOTH]})
+
+        if password1 and not password2:
+            raise ValidationError({'password2': [self.COMPLETE_BOTH]})
+        
+        if password1 and password2:
+            if password1 != password2:
+                raise ValidationError({'password2': ['Please enter ' +
+                    'the same password in both boxes.']})
+        
         return ModelForm.clean(self)
 
+    def _post_clean(self):
+        ModelForm._post_clean(self)
+
+        # because password is excluded from the form, it's not updated
+        # in the model instance, so it's never changed unless we poke it
+        # in here.
+        
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 == password2:
+                self.instance.set_password(password1)
+
 class IntranetUserAdmin(admin.ModelAdmin):
-    exclude = ['password', 'first_name', 'last_name']
+    list_display = ('username', 'full_name', 'job_title', 'program',
+        models.IntranetUser.get_userlevel)
+
+    exclude = ['password', 'first_name', 'last_name', 'user_permissions']
     form = IntranetUserForm
+
+    formfield_overrides = {
+        django.db.models.URLField: {'widget': URLFieldWidgetWithLink},
+        django.db.models.FileField: {'widget': AdminFileWidgetWithSize},
+        django.db.models.ImageField: {'widget': AdminFileWidgetWithSize},
+    }
+    
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        old_formfield = admin.ModelAdmin.formfield_for_dbfield(self,
+            db_field, **kwargs)
+        if (hasattr(old_formfield, 'widget') and
+            isinstance(old_formfield.widget, RelatedFieldWidgetWrapper)):
+            old_formfield.widget.can_add_related = False
+        return old_formfield
     
     def get_form(self, request, obj=None, **kwargs):
         result = admin.ModelAdmin.get_form(self, request, obj=obj, **kwargs)
-        print 'get_form => %s' % dir(result)
-        print 'declared_fields => %s' % result.declared_fields
-        print 'base_fields => %s' % result.base_fields
+        # print 'get_form => %s' % dir(result)
+        # print 'declared_fields => %s' % result.declared_fields
+        # print 'base_fields => %s' % result.base_fields
         return result
 
 admin.site.register(models.IntranetUser, IntranetUserAdmin)
