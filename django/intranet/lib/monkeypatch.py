@@ -317,6 +317,24 @@ def clean_form_with_field_errors(original_function, self):
             self._errors[NON_FIELD_ERRORS] = self.error_class(e.messages)
 patch(BaseForm, '_clean_form', clean_form_with_field_errors)
 
+from django.core.urlresolvers import RegexURLResolver, NoReverseMatch
+from pprint import PrettyPrinter
+pp = PrettyPrinter()
+def reverse_with_debugging(original_function, self, lookup_view, *args, **kwargs):
+    try:
+        return original_function(self, lookup_view, *args, **kwargs)
+    except NoReverseMatch as e:
+        raise NoReverseMatch("%s (%s)" % (str(e),
+            pp.pformat(self.reverse_dict)))
+patch(RegexURLResolver, 'reverse', reverse_with_debugging)
+
+from haystack.views import SearchView
+def extra_context_with_result_count(original_function, self):
+    ctx = original_function(self)
+    ctx['count'] = self.results.count()
+    return ctx
+patch(SearchView, 'extra_context', extra_context_with_result_count)
+
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
     check_formfield_with_debugging)
