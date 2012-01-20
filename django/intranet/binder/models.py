@@ -29,13 +29,14 @@ class IntranetUser(User):
     program = models.ForeignKey(Program, blank=True, null=True)
     cell_phone = models.CharField(max_length=30)
     office_location = models.CharField(max_length=1, choices=OFFICE_LOCATIONS)
-    photo = models.ImageField(upload_to='profile_photos')
+    photo = models.ImageField(upload_to='profile_photos', blank=True, null=True)
     # date_joined = models.DateField(blank=True)
     date_left = models.DateField(blank=True, null=True)
     
     def get_full_name(self):
         return self.full_name
 
+    """
     def hash_password(self, raw_password):
         if raw_password is None:
             return None
@@ -51,6 +52,15 @@ class IntranetUser(User):
             self.set_unusable_password()
         else:
             self.password = self.hash_password(raw_password)
+    """
+
+    def get_userlevel(self):
+        groups = self.groups.all()
+        if groups:
+            return groups[0]
+        else:
+            return None
+    get_userlevel.short_description = 'User Level'
 
 """
 from django.db.models.signals import post_save
