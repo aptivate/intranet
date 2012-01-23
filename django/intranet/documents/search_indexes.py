@@ -55,15 +55,15 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
         return ', '.join([user.full_name for user in document.authors.all()])
         # return [(user.id, user.full_name) for user in document.authors.all()]
         
-    def _setup_save(self, model):
+    def _setup_save(self):
         """Before allowing the model to be saved, we should check that
         we can index the document properly."""
-        super(DocumentIndex, self)._setup_save(model)
+        super(DocumentIndex, self)._setup_save()
         """
         signals.pre_save.connect(self.test_object, sender=model,
             dispatch_uid="document_index_on_validate_document")
         """
-        Document.on_validate.connect(self.test_object, sender=model,
+        Document.on_validate.connect(self.test_object, sender=self.get_model(),
             dispatch_uid="document_index_on_validate_document")
 
     def test_object(self, instance, **kwargs):
