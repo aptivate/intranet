@@ -97,6 +97,11 @@ class DocumentAdmin(django.contrib.admin.ModelAdmin):
             form_template = None
 
         context['referrer'] = request.META.get('HTTP_REFERER')
+
+        is_popup = context['is_popup']
+        
+        context['show_delete_link'] = (not is_popup and
+            self.has_delete_permission(request, obj))
          
         """
         return django.contrib.admin.ModelAdmin.render_change_form(self,
