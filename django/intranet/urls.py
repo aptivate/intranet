@@ -2,7 +2,7 @@ import django.contrib.auth.views
 
 import settings
 import lib.dictutils
-import haystack.urls
+import haystack.views
 import binder.views
 import documents.urls
 
@@ -10,6 +10,7 @@ from django.conf.urls.defaults import patterns, include, url
 from django.conf.urls.static import static
 from django.contrib.auth.models import User
 from django.contrib import admin
+from binder.search import SearchFormWithAllFields
 
 # Uncomment the next two lines to enable the admin:
 
@@ -35,6 +36,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^search/', include(haystack.urls)),
+    # url(r'^search/', include(haystack.urls)),
+    url(r'^search/', haystack.views.SearchView(form_class=SearchFormWithAllFields),
+        name='haystack_search'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
