@@ -170,7 +170,6 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
                 if 'ppt/presentation.xml' in names or \
                     'xl/workbook.xml' in names:
                     # looks like a PowerPoint (PPTX) or Excel (XLSX) file
-                    from settings import DOCTOTEXT_PATH
                     return self.extract_text_using_tool(f, 
                         ['doctotext.sh'], 'PowerPoint XML',
                         document.file.name)
