@@ -139,9 +139,6 @@ HAYSTACK_CONNECTIONS = {
     },
 }
 
-DOCTOTEXT_PATH = os.path.join(os.path.dirname(__file__), 'doctotext',
-    'doctotext.sh')
-
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error.

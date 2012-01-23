@@ -172,7 +172,7 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
                     # looks like a PowerPoint (PPTX) or Excel (XLSX) file
                     from settings import DOCTOTEXT_PATH
                     return self.extract_text_using_tool(f, 
-                        ['sh', DOCTOTEXT_PATH], 'PowerPoint XML',
+                        ['doctotext.sh'], 'PowerPoint XML',
                         document.file.name)
                 
                 raise Exception("Don't know how to index a ZIP file")
