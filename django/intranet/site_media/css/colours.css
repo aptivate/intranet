@@ -112,8 +112,13 @@ table.edit tr.errors td.errors-cell ul.errorlist
 	margin: 0;
 }
 
-td.search-models ul
+table.search-options ul
 {
 	padding: 0;
 	list-style-type: none;
+}
+
+table.search-options li
+{
+	display: inline;
 }

@@ -6,8 +6,9 @@ import os
 from django.db.models import signals
 from django.core.files.uploadedfile import TemporaryUploadedFile, \
     InMemoryUploadedFile
-from haystack.indexes import *
-from haystack import site
+from haystack import indexes
+from haystack.fields import *
+# from haystack import site
 from magic import Magic
 from StringIO import StringIO
 from zipfile import ZipFile
@@ -35,12 +36,20 @@ class TextConverterWithoutPageBreaks(TextConverter):
         render(ltpage)
         return
 
-class DocumentIndex(RealTimeSearchIndex):
+class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
     text = CharField(model_attr='file', document=True)
     title = CharField(model_attr='title')
     notes = CharField(model_attr='notes')
     authors = CharField()
+    programs = MultiValueField()
+    document_type = IntegerField(model_attr='document_type__id')
     
+    def get_model(self):
+        return Document
+    
+    def prepare_programs(self, document):
+        return [p.id for p in document.programs.all()]
+
     def prepare_authors(self, document):
         # print "authors = %s" % document.authors.all()
         return ', '.join([user.full_name for user in document.authors.all()])
@@ -181,6 +190,10 @@ class DocumentIndex(RealTimeSearchIndex):
                     check_extractable=False)
                 return outfp.getvalue()
             
+            elif mime.startswith('text/'):
+                data = f.read(1<<26) # 64 MB
+                return data
+                
             else:
                 raise Exception("Don't know how to index %s documents" %
                     mime)
@@ -189,5 +202,3 @@ class DocumentIndex(RealTimeSearchIndex):
         finally:
             if f is not None:
                 f.close()
-
-site.register(Document, DocumentIndex)

@@ -1,5 +1,20 @@
 {% extends 'default_layout.dhtml' %}
 
+{% block extrastyle %}
+	<script type="text/javascript" src="/static/js/jquery-1.7.1.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.multiSelect.js"></script>
+	<script type="text/javascript" src="/static/js/jquery.bgiframe.min.js"></script>
+	<link rel="stylesheet" href="/static/js/jquery.multiSelect.css" />
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{
+			opts = { selectAll: false, selectNone: true };
+			$("#id_programs").multiSelect(opts);
+			$("#id_document_types").multiSelect(opts);
+		});
+	</script>
+{% endblock %}
+
 {% block title %}
 	Search
 {% endblock %}
@@ -10,20 +25,22 @@
 
 {% block body %}
 	<form method="get" action=".">
-		<table class="ruled">
+		<table class="search-options ruled">
 			<tr>
 				<th>Containing Text</th>
-				<th>Types</th>
+				<th>Programs</th>
+				<th>Document Types</th>
 				<th></th>
 			</tr>
 			<tr>
 				<td>{{ form.q }}</td>
-				<td class="search-models">{{ form.models }}</td>
+				<td class="search-programs">{{ form.programs }}</td>
+				<td class="search-doctypes">{{ form.document_types }}</td>
 				<td><input type="submit" value="Search"></td>
 			</tr>
 		</table>
 
-		{% if query %}
+		{% if is_real_search %}
 			<h3>Results</h3>
 
 			{% if page.object_list %}
