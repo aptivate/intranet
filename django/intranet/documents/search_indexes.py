@@ -152,12 +152,18 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
         
         try:
             f = document.file.file
-            magic = Magic(mime=True)
-            mime = magic.from_buffer(f.read())
+            buffer = f.read()
+            magic = Magic(mime=False).from_buffer(buffer)
+            mime = Magic(mime=True).from_buffer(buffer)
+            mime = mime.replace('; charset=binary', '')
             f.seek(0) # reset to beginning
-        
-            if mime == 'application/zip' or mime == 'application/x-zip':
-                # is it an OpenOffice file?
+            
+            # we can't trust file(1) to identify 
+            if mime == 'application/zip' or mime == 'application/x-zip' \
+                or magic == 'Microsoft Word 2007+' \
+                or magic == 'Microsoft Excel 2007+' \
+                or magic == 'Microsoft PowerPoint 2007+':
+                # is it an Open Office XML file?
                 zip = ZipFile(document.file, 'r')
                 names = zip.namelist()
                 
