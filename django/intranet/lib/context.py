@@ -12,6 +12,7 @@ def intranet_global(request):
             'main_menu': binder.main_menu.MainMenu(request),
             'search': binder.search.SearchFormWithAllFields(request.GET),
             'admin_media': settings.ADMIN_MEDIA_PREFIX,
+            'user': request.user,
         },
         'root_path': '/admin',
     }
