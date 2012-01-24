@@ -9,7 +9,11 @@
 {% endblock %}
 
 {% block body %}
-	<p>Welcome to the {{ global.app_title }}. You may need to
-	<a href="{% url django.contrib.auth.views.login %}">log in</a> to access
-	this site.</p>
+	{% if global.user.is_authenticated %}
+		<p>Welcome to the {{ global.app_title }}, {{ global.user.full_name }}.</p>
+	{% else %}
+		<p>Welcome to the {{ global.app_title }}. Please
+			<a href="{% url django.contrib.auth.views.login %}">log in</a>
+			to access this site.</p>
+	{% endif %}
 {% endblock %}
