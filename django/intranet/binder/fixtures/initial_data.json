@@ -77,7 +77,18 @@
         "model": "auth.group",
         "fields": {
             "name": "Guest",
-            "permissions": []
+            "permissions": [
+                [
+                    "add_document",
+                    "documents",
+                    "document"
+                ],
+                [
+                    "change_document",
+                    "documents",
+                    "document"
+                ]
+            ]
         }
     },
     {
