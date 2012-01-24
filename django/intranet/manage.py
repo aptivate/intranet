@@ -65,7 +65,7 @@ def execute_manager(settings_mod, argv=None):
     project-specific django-admin.py utility.
     """
     setup_environ(settings_mod)
-    from lib.monkeypatch import patch
+    import lib.monkeypatch
     utility = ManagementUtility(argv)
     utility.execute()
 
