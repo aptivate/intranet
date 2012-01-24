@@ -380,6 +380,17 @@ def search_without_optimisation(original_function, self, q, limit=10,
         False, filter, mask, terms, maptype)
 patch(Searcher, 'search', search_without_optimisation)
 
+from django.contrib.admin.helpers import Fieldline, AdminField
+from binder.admin import CustomAdminReadOnlyField
+def iter_with_custom_readonly_field(original_function, self):
+    for i, field in enumerate(self.fields):
+        if field in self.readonly_fields:
+            yield CustomAdminReadOnlyField(self.form, field, is_first=(i == 0),
+                model_admin=self.model_admin)
+        else:
+            yield AdminField(self.form, field, is_first=(i == 0))
+patch(Fieldline, '__iter__', iter_with_custom_readonly_field)
+
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
     check_formfield_with_debugging)

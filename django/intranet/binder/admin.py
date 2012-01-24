@@ -56,6 +56,8 @@ class RelatedFieldWithoutAddLink(RelatedFieldWidgetWrapper):
 
 class AdminFileWidgetWithSize(admin.widgets.AdminFileWidget):
     template_with_initial = u'%(initial_text)s: %(initial)s (%(size)s) %(clear_template)s<br />%(input_text)s: %(input)s'
+    readonly_template = u'%(initial)s (%(size)s)'
+    has_readonly_view = True
 
     def render(self, name, value, attrs=None):
         substitutions = {
@@ -80,6 +82,9 @@ class AdminFileWidgetWithSize(admin.widgets.AdminFileWidget):
                 substitutions['clear_checkbox_id'] = conditional_escape(checkbox_id)
                 substitutions['clear'] = CheckboxInput().render(checkbox_name, False, attrs={'id': checkbox_id})
                 substitutions['clear_template'] = self.template_with_clear % substitutions
+        
+        if attrs.get('readonly'):
+            template = self.readonly_template
         
         return mark_safe(template % substitutions)
 
@@ -167,3 +172,20 @@ class IntranetUserAdmin(admin.ModelAdmin):
 
 admin.site.register(models.IntranetUser, IntranetUserAdmin)
 admin.site.register(models.Program, admin.ModelAdmin)
+
+from django.contrib.admin.helpers import AdminReadonlyField
+
+class CustomAdminReadOnlyField(AdminReadonlyField):
+    """
+    Allow widgets that support a custom read-only view to declare it,
+    by implementing a has_readonly_view attribute, and responding to
+    their render() method differently if readonly=True is passed to it.
+    """
+    
+    def contents(self):
+        form = self.form
+        field = self.field['field']
+        if hasattr(form[field].field.widget, 'has_readonly_view'):
+            return form[field].as_widget(attrs={'readonly': True})
+        else:
+            return AdminReadonlyField.contents(self)
