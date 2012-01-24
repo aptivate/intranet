@@ -152,5 +152,5 @@ class SearchViewWithExtraFilters(SearchView):
         return {
             'is_real_search': (self.form.is_valid() and
                 len(self.form.cleaned_data) > 0),
-            'count': getattr(self.form, 'count'),
+            'count': getattr(self.form, 'count', None),
         }
