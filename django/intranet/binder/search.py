@@ -142,6 +142,8 @@ class SearchFormWithAllFields(ModelSearchForm):
         
         if self.load_all:
             sqs = sqs.load_all()
+            
+        self.count = sqs.count()
         
         return sqs.models(*self.get_models())
 
@@ -150,4 +152,5 @@ class SearchViewWithExtraFilters(SearchView):
         return {
             'is_real_search': (self.form.is_valid() and
                 len(self.form.cleaned_data) > 0),
+            'count': self.form.count,
         }

@@ -60,9 +60,21 @@
 
 			{% if page.has_previous or page.has_next %}
 				<div>
-					{% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+					{% if page.has_previous %}
+						<button type="submit" name="page" value="{{ page.previous_page_number }}">
+							&laquo; Previous
+						</button>
+					{% else %}
+						&laquo; Previous
+					{% endif %}
 					|
-					{% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+					{% if page.has_next %}
+						<button type="submit" name="page" value="{{ page.next_page_number }}">
+							Next &raquo;
+						</button>
+					{% else %}
+						Next &raquo;
+					{% endif %}
 					|
 					{{ count }} results
 				</div>
