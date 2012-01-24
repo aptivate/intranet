@@ -123,7 +123,8 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
                     (format_name, e));
                 
             (out, err) = process.communicate()
-            if err != '' and err != "Using ODF/OOXML parser.\n":
+            if err != '' and err != "Using ODF/OOXML parser.\n" \
+                and err != "Using XLS parser.\n":
                 # os.system("ls -la /tmp")
                 # err = err.replace(path, original_name)
                 raise Exception('Failed to convert %s document: %s' % 
