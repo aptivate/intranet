@@ -183,6 +183,11 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
                 
                 raise Exception("Don't know how to index a ZIP file")
             
+            elif mime == 'application/vnd.ms-excel':
+                from settings import DOCTOTEXT_PATH
+                return self.extract_text_using_tool(f, 
+                    ['sh', DOCTOTEXT_PATH], 'Excel', document.file.name)
+                
             elif mime == 'application/msword':
                 return self.extract_text_using_tool(f, ['antiword'], 'Word',
                     document.file.name)
