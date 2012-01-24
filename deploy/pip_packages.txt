@@ -4,7 +4,7 @@ south==0.7.3
 # django-haystack==1.2.6
 git+git://github.com/aptivate/django-haystack.git
 Whoosh==2.3.2
-python-magic==0.4.2
+python-magic
 lxml==2.3.3
 # docx==0.1.2
 http://github.com/mikemaccana/python-docx/tarball/master
