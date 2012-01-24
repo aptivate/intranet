@@ -171,6 +171,8 @@ TEMPLATE_CONTEXT_PROCESSORS = \
     list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
     ['lib.context.intranet_global']
 
+AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
+
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
 from private_settings import *
