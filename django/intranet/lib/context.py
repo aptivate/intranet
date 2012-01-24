@@ -9,7 +9,7 @@ def intranet_global(request):
         'global': {
             'app_title': settings.APP_TITLE,
             'path': request.path,
-            'main_menu': binder.main_menu.MAIN_MENU,
+            'main_menu': binder.main_menu.MainMenu(request),
             'search': binder.search.SearchFormWithAllFields(request.GET),
             'admin_media': settings.ADMIN_MEDIA_PREFIX,
         },
