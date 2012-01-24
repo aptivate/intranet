@@ -174,11 +174,11 @@ def login_with_debugging(original_function, request,
         if username and password:
             from django.contrib.auth import authenticate
             form.user_cache = authenticate(username=username, password=password)
-            print "user_cache = %s" % form.user_cache
+            print "user_cache = %s" % repr(form.user_cache)
             print "get_user = %s" % form.get_user()
     
-    print "user_cache.is_active = %s" % form.user_cache.is_active
-    print "user_cache.is_staff = %s" % form.user_cache.is_staff
+    # print "user_cache.is_active = %s" % form.user_cache.is_active
+    # print "user_cache.is_staff = %s" % form.user_cache.is_staff
     
     result = original_function(request, template_name, redirect_field_name,
         authentication_form, current_app, extra_context)
@@ -380,16 +380,32 @@ def search_without_optimisation(original_function, self, q, limit=10,
         False, filter, mask, terms, maptype)
 patch(Searcher, 'search', search_without_optimisation)
 
-from django.contrib.admin.helpers import Fieldline, AdminField
+from django.contrib.admin.helpers import Fieldline, AdminField, mark_safe
 from binder.admin import CustomAdminReadOnlyField
-def iter_with_custom_readonly_field(original_function, self):
-    for i, field in enumerate(self.fields):
-        if field in self.readonly_fields:
-            yield CustomAdminReadOnlyField(self.form, field, is_first=(i == 0),
-                model_admin=self.model_admin)
+class FieldlineWithCustomReadOnlyField(object):
+    def __init__(self, form, field, readonly_fields=None, model_admin=None):
+        self.form = form # A django.forms.Form instance
+        if not hasattr(field, "__iter__"):
+            self.fields = [field]
         else:
-            yield AdminField(self.form, field, is_first=(i == 0))
-patch(Fieldline, '__iter__', iter_with_custom_readonly_field)
+            self.fields = field
+        self.model_admin = model_admin
+        if readonly_fields is None:
+            readonly_fields = ()
+        self.readonly_fields = readonly_fields
+
+    def __iter__(self):
+        for i, field in enumerate(self.fields):
+            if field in self.readonly_fields:
+                yield CustomAdminReadOnlyField(self.form, field, is_first=(i == 0),
+                    model_admin=self.model_admin)
+            else:
+                yield AdminField(self.form, field, is_first=(i == 0))
+
+    def errors(self):
+        return mark_safe(u'\n'.join([self.form[f].errors.as_ul() for f in self.fields if f not in self.readonly_fields]).strip('\n'))
+import django.contrib.admin.helpers
+django.contrib.admin.helpers.Fieldline = FieldlineWithCustomReadOnlyField
 
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
