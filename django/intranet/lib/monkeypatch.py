@@ -137,7 +137,7 @@ from django.forms.fields import FileField
 def to_python_with_debugging(original_function, self, data):
     # print "data = %s" % data
     return original_function(self, data)
-patch(FileField, 'to_python', to_python_with_debugging)
+# patch(FileField, 'to_python', to_python_with_debugging)
 
 from django.contrib.admin.sites import AdminSite
 def has_permission_with_debugging(original_function, self, request):
@@ -151,7 +151,7 @@ def has_permission_with_debugging(original_function, self, request):
     # print "request.user.is_active = %s" % request.user.is_active
     # print "request.user.is_staff = %s" % request.user.is_staff
     return has_permission
-patch(AdminSite, 'has_permission', has_permission_with_debugging)
+# patch(AdminSite, 'has_permission', has_permission_with_debugging)
 
 import django.contrib.auth.views
 def login_with_debugging(original_function, request,
@@ -327,13 +327,6 @@ def reverse_with_debugging(original_function, self, lookup_view, *args, **kwargs
         raise NoReverseMatch("%s (%s)" % (str(e),
             pp.pformat(self.reverse_dict)))
 patch(RegexURLResolver, 'reverse', reverse_with_debugging)
-
-from haystack.views import SearchView
-def extra_context_with_result_count(original_function, self):
-    ctx = original_function(self)
-    ctx['count'] = self.results.count()
-    return ctx
-patch(SearchView, 'extra_context', extra_context_with_result_count)
 
 from haystack.backends.whoosh_backend import WhooshSearchBackend, \
     AsyncWriter, SpellChecker
