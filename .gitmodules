@@ -1,0 +1,3 @@
+[submodule "jcc"]
+	path = jcc
+	url = git@github.com:aptivate/jcc.git
