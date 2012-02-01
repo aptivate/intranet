@@ -40,7 +40,7 @@ if update_ve or envtime < envspec or envreqs < envspec:
         # check requirements
         if update_ve or envreqs < envspec:
             # allow relative path specs in requirements file, e.g. ../tika
-            os.chdir(os.dirname(REQUIREMENTS))
+            os.chdir(path.dirname(REQUIREMENTS))
             import pip
             pip.main(initial_args=['install', '-r', REQUIREMENTS])
             file(VE_TIMESTAMP, 'w').close()
