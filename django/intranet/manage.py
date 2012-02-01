@@ -1,7 +1,7 @@
 #!/usr/bin/env python2.6
 # -*- coding: utf-8 -*-
 from os import path
-import shutil, sys, virtualenv, subprocess
+import os, shutil, sys, virtualenv, subprocess
 
 PROJECT_ROOT = path.abspath(path.dirname(__file__))
 REQUIREMENTS = path.abspath(path.join(PROJECT_ROOT, '..', '..', 'deploy', 'pip_packages.txt'))
@@ -39,6 +39,8 @@ if update_ve or envtime < envspec or envreqs < envspec:
 
         # check requirements
         if update_ve or envreqs < envspec:
+            # allow relative path specs in requirements file, e.g. ../tika
+            os.chdir(os.dirname(REQUIREMENTS))
             import pip
             pip.main(initial_args=['install', '-r', REQUIREMENTS])
             file(VE_TIMESTAMP, 'w').close()
