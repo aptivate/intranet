@@ -11,5 +11,7 @@ http://github.com/mikemaccana/python-docx/tarball/master
 # ooxml==0.2.1
 PIL==1.1.7
 pdfminer==20110515
-git+git://github.com/aptivate/jcc.git
-../tika
+# jcc needs to be installed before we can install tika, so
+# it must be installed on the host using puppet or
+# pip install git://github.com/aptivate/jcc.git
+../python-tika
