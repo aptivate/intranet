@@ -45,7 +45,7 @@ skip_next_arg = False
 forward_next_arg = False
 egg_info_mode = False
 
-for arg in sys.argv:
+for arg in sys.argv[1:]:
     if skip_next_arg:
         skip_next_arg = False
     elif forward_next_arg:
