@@ -400,6 +400,12 @@ class FieldlineWithCustomReadOnlyField(object):
 import django.contrib.admin.helpers
 django.contrib.admin.helpers.Fieldline = FieldlineWithCustomReadOnlyField
 
+from django.db.backends.creation import BaseDatabaseCreation
+def destroy_test_db_disabled(original_function, self, test_database_name,
+    verbosity):
+    pass
+# patch(BaseDatabaseCreation, 'destroy_test_db', destroy_test_db_disabled)
+
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
     check_formfield_with_debugging)
