@@ -12,4 +12,4 @@ http://github.com/mikemaccana/python-docx/tarball/master
 PIL==1.1.7
 pdfminer==20110515
 git+git://github.com/aptivate/jcc.git
-../tika
+-e ../tika
