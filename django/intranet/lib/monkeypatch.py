@@ -406,6 +406,17 @@ def destroy_test_db_disabled(original_function, self, test_database_name,
     pass
 # patch(BaseDatabaseCreation, 'destroy_test_db', destroy_test_db_disabled)
 
+# allow group lookups by name in fixtures
+from django.contrib.auth import models as auth_models
+from django.db import models as db_models
+class GroupManagerWithNaturalKey(db_models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+auth_models.Group.objects = GroupManagerWithNaturalKey()
+def group_natural_key(self):
+    return (self.name)
+auth_models.Group.natural_key = group_natural_key
+
 """
 patch(django.contrib.admin.validation, 'check_formfield', 
     check_formfield_with_debugging)
