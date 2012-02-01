@@ -52,6 +52,9 @@ if update_ve or envtime < envspec or envreqs < envspec:
 
 go_to_ve()
 
+import tika
+tika.initVM()
+
 # run django
 from django.core.management import setup_environ, ManagementUtility
 
