@@ -40,8 +40,8 @@ for k, v in options.iteritems():
         jcc_args.append(v)
 
 setup_args = []
-
 egg_info_mode = False
+maxheap = '64m'
 
 i = 1
 
@@ -61,6 +61,9 @@ while i < len(sys.argv):
         jcc_args.append(arg)
         i += 1
         jcc_args.append(sys.argv[i])
+    elif arg == '--maxheap':
+        i += 1
+        maxheap = sys.argv[i]
     else:
         setup_args.append(arg)
     """
@@ -78,6 +81,8 @@ while i < len(sys.argv):
 for extra_arg in setup_args:
     jcc_args.append('--extra-setup-arg')
     jcc_args.append(extra_arg)
+
+jcc_args.extend(['--maxheap', maxheap])
 
 # monkey patch to send extra args to distutils
 # import setuptools
