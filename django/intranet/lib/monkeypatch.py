@@ -225,6 +225,8 @@ def check_formfield_with_debugging(original_function, cls, model, opts, label, f
     print 'checking %s.%s: base_fields = %s\n' % (cls.__name__, field,
         getattr(cls.form, 'base_fields'))
     return original_function(cls, model, opts, label, field)
+# patch(django.contrib.admin.validation, 'check_formfield', 
+#     check_formfield_with_debugging)
 
 from django.forms.models import BaseModelForm, InlineForeignKeyField, \
     construct_instance, NON_FIELD_ERRORS
@@ -406,18 +408,80 @@ def destroy_test_db_disabled(original_function, self, test_database_name,
     pass
 # patch(BaseDatabaseCreation, 'destroy_test_db', destroy_test_db_disabled)
 
-# allow group lookups by name in fixtures
+# allow group lookups by name in fixtures, until
+# https://code.djangoproject.com/ticket/13914 lands
 from django.contrib.auth import models as auth_models
 from django.db import models as db_models
 class GroupManagerWithNaturalKey(db_models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
-auth_models.Group.objects = GroupManagerWithNaturalKey()
+# print "auth_models.Group.objects = %s" % auth_models.Group.objects
+del auth_models.Group._default_manager
+GroupManagerWithNaturalKey().contribute_to_class(auth_models.Group, 'objects')
 def group_natural_key(self):
-    return (self.name)
+    return (self.name,)
 auth_models.Group.natural_key = group_natural_key
 
-"""
-patch(django.contrib.admin.validation, 'check_formfield', 
-    check_formfield_with_debugging)
-"""
+import django.core.serializers.python
+def Deserializer_with_debugging(original_function, object_list, **options):
+    from django.core.serializers.python import _get_model
+    from django.db import DEFAULT_DB_ALIAS
+    from django.utils.encoding import smart_unicode
+    from django.conf import settings
+
+    print "loading all: %s" % object_list
+
+    db = options.pop('using', DEFAULT_DB_ALIAS)
+    db_models.get_apps()
+    for d in object_list:
+        print "loading %s" % d
+        
+        # Look up the model and starting build a dict of data for it.
+        Model = _get_model(d["model"])
+        data = {Model._meta.pk.attname : Model._meta.pk.to_python(d["pk"])}
+        m2m_data = {}
+
+        # Handle each field
+        for (field_name, field_value) in d["fields"].iteritems():
+            if isinstance(field_value, str):
+                field_value = smart_unicode(field_value, options.get("encoding", settings.DEFAULT_CHARSET), strings_only=True)
+
+            field = Model._meta.get_field(field_name)
+
+            # Handle M2M relations
+            if field.rel and isinstance(field.rel, db_models.ManyToManyRel):
+                print "  field = %s" % field
+                print "  field.rel = %s" % field.rel
+                print "  field.rel.to = %s" % field.rel.to
+                print "  field.rel.to._default_manager = %s" % (
+                    field.rel.to._default_manager)
+                print "  field.rel.to.objects = %s" % (
+                    field.rel.to.objects)
+
+                if hasattr(field.rel.to._default_manager, 'get_by_natural_key'):
+                    def m2m_convert(value):
+                        if hasattr(value, '__iter__'):
+                            return field.rel.to._default_manager.db_manager(db).get_by_natural_key(*value).pk
+                        else:
+                            return smart_unicode(field.rel.to._meta.pk.to_python(value))
+                else:
+                    m2m_convert = lambda v: smart_unicode(field.rel.to._meta.pk.to_python(v))
+                m2m_data[field.name] = [m2m_convert(pk) for pk in field_value]
+                for i, pk in enumerate(field_value):
+                    print "  %s: converted %s to %s" % (field.name,
+                        pk, m2m_data[field.name][i])
+    
+    result = original_function(object_list, **options)
+    print "  result = %s" % result
+    import traceback
+    traceback.print_stack()
+    return result
+# patch(django.core.serializers.python, 'Deserializer',
+#     Deserializer_with_debugging)
+
+import django.core.serializers.base
+def save_with_debugging(original_function, self, save_m2m=True, using=None):
+    print "%s.save(save_m2m=%s, using=%s)" % (self, save_m2m, using)
+    original_function(self, save_m2m, using)
+# patch(django.core.serializers.base.DeserializedObject, 'save',
+#     save_with_debugging)
