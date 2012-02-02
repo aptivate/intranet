@@ -16,6 +16,11 @@ from binder.search import SearchFormWithAllFields, SearchViewWithExtraFilters
 
 admin.autodiscover()
 
+from django.contrib.auth.models import User
+admin.site.unregister(User)
+from django.contrib.sites.models import Site
+admin.site.unregister(Site)
+
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', 
@@ -28,7 +33,7 @@ urlpatterns = patterns('',
         {'template_name': 'front_page.dhtml'}, 
         name="logout"),
     url(r'^documents/', include(documents.urls)),
-    url(r'^users/', include(admin.site._registry[User].urls)),
+    # url(r'^users/', include(admin.site._registry[User].urls)),
     # url(r'^intranet/', include('intranet.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
