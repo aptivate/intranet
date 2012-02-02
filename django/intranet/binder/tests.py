@@ -29,20 +29,15 @@ class BinderTest(TestCase):
         self.assertEqual('admin:documents_document_changelist',
             main_menu[1].url_name)
         self.assertEqual("Users", main_menu[2].title)
-        self.assertEqual('admin:auth_user_changelist', main_menu[2].url_name)
+        self.assertEqual('admin:binder_intranetuser_changelist',
+            main_menu[2].url_name)
         
     def test_menu_tag_with_named_route(self):
         context = Context({'global':{'path':'/'}})
-        self.assertEqual('<li class="selected"><a href="/">Home</a></li>',
+        self.assertEqual('<td class="selected"><a href="/">Home</a></td>',
             menu_tag.menu_item(context, 'front_page', 'Home'))
 
         context = Context({'global':{'path':'/foo'}})
-        self.assertEqual('<li ><a href="/">Home</a></li>',
+        self.assertEqual('<td ><a href="/">Home</a></td>',
             menu_tag.menu_item(context, 'front_page', 'Home'))
 
-    def test_menu_tag_with_uri(self):
-        context = Context({'global':{'path':'/foo'}})
-        self.assertEqual('<li ><a href="/">Home</a></li>',
-            menu_tag.menu_item(context, '/', 'Home'))
-        self.assertEqual('<li ><a href="/home">Home</a></li>',
-            menu_tag.menu_item(context, '/home', 'Home'))
