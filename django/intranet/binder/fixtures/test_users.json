@@ -1,0 +1,38 @@
+[
+    {
+        "pk": 1,
+        "model": "auth.user",
+        "fields": {
+            "username": "john",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": true,
+            "last_login": "2012-01-24 10:36:09",
+            "groups": [
+                [
+                    "User"
+                ]
+            ],
+            "user_permissions": [],
+            "password": "sha1$03d63$4ae1e7f3426c5c8bb4e008dea8d178f88a0c62ed",
+            "email": "lennon@thebeatles.com",
+            "date_joined": "2012-01-12 11:44:56"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "binder.intranetuser",
+        "fields": {
+            "office_location": "7",
+            "photo": "profile_photos/Work_on_Aid_Ontology_1.png",
+            "sex": "M",
+            "program": null,
+            "full_name": "John Lennon",
+            "cell_phone": "32543",
+            "date_left": null,
+            "job_title": "Songwriter"
+        }
+    }
+]
