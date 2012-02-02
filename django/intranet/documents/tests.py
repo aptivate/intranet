@@ -254,7 +254,7 @@ class DocumentsModuleTest(TestCase):
     
     def test_word_2003_document_indexing(self):
         doc = Document()
-        self.assign_fixture_to_filefield('word_2003_document.doc', doc.file) 
+        self.assign_fixture_to_filefield('word_2003.doc', doc.file) 
         
         self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
             "adipiscing elit.\n\n\nPraesent pharetra urna eu arcu blandit " +
@@ -263,7 +263,7 @@ class DocumentsModuleTest(TestCase):
 
     def test_word_2007_document_indexing(self):
         doc = Document()
-        self.assign_fixture_to_filefield('word_2007_document.docx', doc.file) 
+        self.assign_fixture_to_filefield('word_2007.docx', doc.file) 
         
         self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
             "adipiscing elit.\n\nPraesent pharetra urna eu arcu blandit " +
@@ -272,7 +272,7 @@ class DocumentsModuleTest(TestCase):
 
     def test_excel_2003_indexing(self):
         doc = Document()
-        self.assign_fixture_to_filefield('excel_document_2003.xls', doc.file) 
+        self.assign_fixture_to_filefield('excel_2003.xls', doc.file) 
         
         self.assertEquals("Sheet1\n\tLorem ipsum dolor sit amet, " +
             "consectetur adipiscing elit.\t\tPraesent pharetra urna eu " +
@@ -284,7 +284,7 @@ class DocumentsModuleTest(TestCase):
 
     def test_excel_2007_indexing(self):
         doc = Document()
-        self.assign_fixture_to_filefield('excel_document_2007.xlsx', doc.file) 
+        self.assign_fixture_to_filefield('excel_2007.xlsx', doc.file) 
         
         self.assertEquals("Sheet1\n\tLorem ipsum dolor sit amet, " +
             "consectetur adipiscing elit.\tPraesent pharetra urna eu " +
@@ -298,4 +298,25 @@ class DocumentsModuleTest(TestCase):
             "&\"Times New Roman,Regular\"&12&A\t\n\n" +
             "&\"Times New Roman,Regular\"&12Page &P\t\n\n\n",
             self.index.prepare_text(doc))
+
+    def test_powerpoint_2003_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('powerpoint_2003.ppt', doc.file) 
         
+        self.assertEquals("Lorem Ipsum\n" +
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n" +
+            "Praesent pharetra urna eu arcu blandit nec pretium odio " +
+            "fermentum.\n" +
+            "Sed in orci quis risus interdum lacinia ut eu nisl.\n\n\n\n\n",
+            self.index.prepare_text(doc))
+
+    def test_powerpoint_2007_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('powerpoint_2007.pptx', doc.file) 
+        
+        self.assertEquals("Lorem Ipsum\n" +
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n" +
+            "Praesent pharetra urna eu arcu blandit nec pretium odio " +
+            "fermentum.\n" +
+            "Sed in orci quis risus interdum lacinia ut eu nisl.\n\n",
+            self.index.prepare_text(doc))
