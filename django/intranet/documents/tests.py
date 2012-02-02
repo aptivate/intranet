@@ -269,4 +269,33 @@ class DocumentsModuleTest(TestCase):
             "adipiscing elit.\n\nPraesent pharetra urna eu arcu blandit " +
             "nec pretium odio fermentum. Sed in orci quis risus interdum " +
             "lacinia ut eu nisl.\n", self.index.prepare_text(doc))
+
+    def test_excel_2003_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('excel_document_2003.xls', doc.file) 
+        
+        self.assertEquals("Sheet1\n\tLorem ipsum dolor sit amet, " +
+            "consectetur adipiscing elit.\t\tPraesent pharetra urna eu " +
+            "arcu blandit nec pretium odio fermentum.\n\tSed in orci " +
+            "quis risus interdum lacinia ut eu nisl.\n\t\tSed facilisis " +
+            "nibh eu diam tincidunt pellentesque semper nulla auctor.\n" +
+            "\n\nSheet2\n\t\n\n\nSheet3\n\t\n\n\n",
+            self.index.prepare_text(doc))
+
+    def test_excel_2007_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('excel_document_2007.xlsx', doc.file) 
+        
+        self.assertEquals("Sheet1\n\tLorem ipsum dolor sit amet, " +
+            "consectetur adipiscing elit.\tPraesent pharetra urna eu " +
+            "arcu blandit nec pretium odio fermentum.\n\tSed in orci " +
+            "quis risus interdum lacinia ut eu nisl.\n\tSed facilisis " +
+            "nibh eu diam tincidunt pellentesque semper nulla auctor." +
+            "\n\n&\"Times New Roman,Regular\"&12&A\t\n\n" +
+            "&\"Times New Roman,Regular\"&12Page &P\t\n\n\nSheet2\n\n" +
+            "&\"Times New Roman,Regular\"&12&A\t\n\n" +
+            "&\"Times New Roman,Regular\"&12Page &P\t\n\n\nSheet3\n\n" +
+            "&\"Times New Roman,Regular\"&12&A\t\n\n" +
+            "&\"Times New Roman,Regular\"&12Page &P\t\n\n\n",
+            self.index.prepare_text(doc))
         
