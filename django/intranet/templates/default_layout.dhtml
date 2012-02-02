@@ -30,7 +30,7 @@
 						<span class="search-input">{{ global.search.q }}</span>
 						{% comment %}<span class="search-models">{{ global.search.models }}</span>{% endcomment %}
 						<span class="search-button"><input type="submit" 
-							value="Search"></span>
+							value="Search" /></span>
 					</form>
 				</td>
 			</tr>
