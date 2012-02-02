@@ -149,68 +149,28 @@ class DocumentIndex(indexes.RealTimeSearchIndex, indexes.Indexable):
         if document.file is None:
             return
 
-        document.file.open()
-        
-        try:
-            f = document.file.file
-            buffer = f.read()
-            magic = Magic(mime=False).from_buffer(buffer)
-            mime = Magic(mime=True).from_buffer(buffer)
-            mime = mime.replace('; charset=binary', '')
-            f.seek(0) # reset to beginning
-            
-            # we can't trust file(1) to identify 
-            if mime == 'application/zip' or mime == 'application/x-zip' \
-                or magic == 'Microsoft Word 2007+' \
-                or magic == 'Microsoft Excel 2007+' \
-                or magic == 'Microsoft PowerPoint 2007+':
-                # is it an Open Office XML file?
-                zip = ZipFile(document.file, 'r')
-                names = zip.namelist()
-                
-                if 'word/document.xml' in names:
-                    # looks like a Word (DOCX) file
-                    document = docx.opendocx(document.file)
-                    paratextlist = docx.getdocumenttext(document)
-                    return "\n\n".join(paratextlist)
-                
-                if 'ppt/presentation.xml' in names or \
-                    'xl/workbook.xml' in names:
-                    # looks like a PowerPoint (PPTX) or Excel (XLSX) file
-                    from settings import DOCTOTEXT_PATH
-                    return self.extract_text_using_tool(f, 
-                        ['sh', DOCTOTEXT_PATH], 'PowerPoint XML',
-                        document.file.name)
-                
-                raise Exception("Don't know how to index a ZIP file")
-            
-            elif mime == 'application/vnd.ms-excel':
-                from settings import DOCTOTEXT_PATH
-                return self.extract_text_using_tool(f, 
-                    ['sh', DOCTOTEXT_PATH], 'Excel', document.file.name)
-                
-            elif mime == 'application/msword':
-                return self.extract_text_using_tool(f, ['antiword'], 'Word',
-                    document.file.name)
+        # http://redmine.djity.net/projects/pythontika/wiki
+        import tika
+        tika.getVMEnv().attachCurrentThread()
+        parser = tika.AutoDetectParser()
 
-            elif mime == 'application/pdf':
-                rsrcmgr = PDFResourceManager(caching=True)
-                outfp = StringIO()
-                device = TextConverterWithoutPageBreaks(rsrcmgr, outfp,
-                    codec='utf-8', laparams=LAParams())
-                process_pdf(rsrcmgr, device, f, caching=True,
-                    check_extractable=False)
-                return outfp.getvalue()
-            
-            elif mime.startswith('text/'):
-                data = f.read(1<<26) # 64 MB
-                return data
-                
+        real_file_object = document.file.file
+
+        if isinstance(real_file_object, InMemoryUploadedFile):
+            buffer = document.file.read()
+            input = tika.StringBufferInputStream(buffer)
+        else:
+            if isinstance(real_file_object, TemporaryUploadedFile):
+                path = real_file_object.temporary_file_path()
             else:
-                raise Exception("Don't know how to index %s documents" %
-                    mime)
-                # data = f.read(1<<26) # 64 MB
-                # return data
-        finally:
-            if f is not None:
-                f.close()
+                path = real_file_object.name
+            input = tika.FileInputStream(tika.File(path))
+        
+        # Create handler for content, metadata and context
+        content = tika.BodyContentHandler()
+        metadata = tika.Metadata()
+        context = tika.ParseContext()
+
+        # Parse the data and display result
+        parser.parse(input, content, metadata, context)
+        return content.toString()
