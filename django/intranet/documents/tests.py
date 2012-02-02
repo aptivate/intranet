@@ -134,6 +134,9 @@ class DocumentsModuleTest(TestCase):
         response = self.client.post(reverse('admin:documents_document_add'))
         # fails with PermissionDenied if our permissions are wrong
         self.client = SuperClient()
+
+        from search_indexes import DocumentIndex
+        self.index = DocumentIndex()
     
     def login(self):
         self.assertTrue(self.client.login(username=self.john.username,
@@ -249,15 +252,21 @@ class DocumentsModuleTest(TestCase):
         df = DjangoFile(open(path))
         filefield.save(fixture_file_name, df, save=False) 
     
-    def test_document_indexing(self):
-        from search_indexes import DocumentIndex
-        index = DocumentIndex()
-
+    def test_word_2003_document_indexing(self):
         doc = Document()
         self.assign_fixture_to_filefield('word_2003_document.doc', doc.file) 
         
         self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
             "adipiscing elit.\n\n\nPraesent pharetra urna eu arcu blandit " +
             "nec pretium odio fermentum. Sed in orci quis risus interdum " +
-            "lacinia ut eu nisl.\n\n", index.prepare_text(doc))
+            "lacinia ut eu nisl.\n\n", self.index.prepare_text(doc))
+
+    def test_word_2007_document_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('word_2007_document.docx', doc.file) 
+        
+        self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
+            "adipiscing elit.\n\nPraesent pharetra urna eu arcu blandit " +
+            "nec pretium odio fermentum. Sed in orci quis risus interdum " +
+            "lacinia ut eu nisl.\n", self.index.prepare_text(doc))
         
