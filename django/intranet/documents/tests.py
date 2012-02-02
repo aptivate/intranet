@@ -241,15 +241,23 @@ class DocumentsModuleTest(TestCase):
         self.assertEqual('whee', doc.notes)
         self.assertItemsEqual([self.john], doc.authors.all())
     
-    """
-    def test_admin_submit_with_error_doesnt_lose_file_data(self):
-        from django.db import models
-        class TestDocument(models.Model):
-            name = models.CharField(max_length=255, unique=True)
-            file = models.FileField(upload_to='documents')
-        from django.core.management import ManagementUtility
-        ManagementUtility(['dummy', 'syncdb']).execute()
-        admin.site.register(TestDocument, admin.ModelAdmin)
-        """
+    def assign_fixture_to_filefield(self, fixture_file_name, filefield):
+        from django.core.files import File as DjangoFile
+        import os.path
+        path = os.path.join(os.path.dirname(__file__), 'fixtures',
+            fixture_file_name)
+        df = DjangoFile(open(path))
+        filefield.save(fixture_file_name, df, save=False) 
     
-        # self.client.
+    def test_document_indexing(self):
+        from search_indexes import DocumentIndex
+        index = DocumentIndex()
+
+        doc = Document()
+        self.assign_fixture_to_filefield('word_2003_document.doc', doc.file) 
+        
+        self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
+            "adipiscing elit.\n\n\nPraesent pharetra urna eu arcu blandit " +
+            "nec pretium odio fermentum. Sed in orci quis risus interdum " +
+            "lacinia ut eu nisl.\n\n", index.prepare_text(doc))
+        
