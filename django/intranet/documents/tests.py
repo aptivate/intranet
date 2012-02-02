@@ -320,3 +320,12 @@ class DocumentsModuleTest(TestCase):
             "fermentum.\n" +
             "Sed in orci quis risus interdum lacinia ut eu nisl.\n\n",
             self.index.prepare_text(doc))
+
+    def test_pdf_indexing(self):
+        doc = Document()
+        self.assign_fixture_to_filefield('word_pdf.pdf', doc.file) 
+        
+        self.assertEquals("Lorem ipsum dolor sit amet, consectetur " +
+            "adipiscing elit.\nPraesent pharetra urna eu arcu blandit " +
+            "nec pretium odio fermentum. Sed in orci quis risus interdum " +
+            "lacinia ut eu nisl.\n\n\n", self.index.prepare_text(doc))
