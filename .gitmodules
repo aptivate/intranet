@@ -1,3 +1,6 @@
 [submodule "jcc"]
 	path = jcc
 	url = git://github.com/aptivate/jcc.git
+[submodule "python-tika"]
+	path = python-tika
+	url = git://github.com/aptivate/python-tika.git
