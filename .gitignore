@@ -15,5 +15,6 @@ django/intranet/admin-source
 django/intranet/django-source
 django/intranet/search_index
 django/intranet/uploads
+django/intranet/apache-tika.log
 doc
 */.svn/tmp
