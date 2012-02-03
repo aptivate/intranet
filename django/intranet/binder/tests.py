@@ -41,3 +41,10 @@ class BinderTest(TestCase):
         self.assertEqual('<td ><a href="/">Home</a></td>',
             menu_tag.menu_item(context, 'front_page', 'Home'))
 
+    def test_search_results_page_changelist(self):
+        response = self.client.post(reverse('search'), {'q': 'dogs'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual('search/search.html', response.template[0].name)
+        self.assertIn('change_list', response.context,
+            "No change_list in response context: %s" % response.context.keys())
+        

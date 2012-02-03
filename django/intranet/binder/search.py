@@ -1,3 +1,5 @@
+from django.contrib.admin.templatetags import admin_list
+ 
 from django import forms
 from django.forms.widgets import SelectMultiple
 
@@ -51,7 +53,7 @@ class SearchQuerySetWithAllFields(SearchQuerySet):
         return self.filter(**kwargs)
     
     def filter(self, **kwargs):
-        print "enter filter: old query = %s" % self.query
+        # print "enter filter: old query = %s" % self.query
         
         for param_name, param_value in kwargs.iteritems():
             dj = BaseSearchQuery()
@@ -77,8 +79,15 @@ class SearchQuerySetWithAllFields(SearchQuerySet):
             else:
                 self.query.add_filter(SQ({param_name: param_value}))
         
-        print "exit filter: new query = %s" % self.query
+        # print "exit filter: new query = %s" % self.query
         return self
+    
+    def order_by(self, *args):
+        """Alters the order in which the results should appear."""
+        result = super(SearchQuerySetWithAllFields, self).order_by(*args)
+        result.query.select_related = self.query.select_related
+        result.query.where = self.query.where
+        return result
 
 class SelectMultipleWithJquery(SelectMultiple):
     def __init__(self, attrs=None, choices=(), html_name=None):
@@ -113,15 +122,14 @@ class SearchFormWithAllFields(ModelSearchForm):
     def __init__(self, *args, **kwargs):
         kwargs['searchqueryset'] = SearchQuerySetWithAllFields()
         ModelSearchForm.__init__(self, *args, **kwargs)
-        print "SearchFormWithAllFields initialised"
+        # print "SearchFormWithAllFields initialised"
 
     def search(self):
-        print "search starting"
-        
-        print "programs = %s" % self.cleaned_data.get("programs")
+        # print "search starting"
+        # print "programs = %s" % self.cleaned_data.get("programs")
         
         if not self.is_valid():
-            print "invalid form"
+            # print "invalid form"
             return self.no_query_found()
         
         kwargs = {}
@@ -148,9 +156,64 @@ class SearchFormWithAllFields(ModelSearchForm):
         return sqs.models(*self.get_models())
 
 class SearchViewWithExtraFilters(SearchView):
+    list_display = ('title', )
+    ordering = ['-title']
+    verbose_name = "search result"
+
+    from django.core.paginator import Paginator
+    paginator = Paginator
+
+    from django.db import models as fields
+    
+    fields = {
+        'title': fields.TextField(),
+    }
+    
+    from django.template import RequestContext
+    
+    def get_field(self, name):
+        return self.fields[name]
+
+    def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
+        return self.paginator(queryset, per_page, orphans, allow_empty_first_page)
+
+    def __init__(self, template=None, load_all=True, form_class=None, 
+        searchqueryset=None, context_class=RequestContext, 
+        results_per_page=None):
+        super(SearchViewWithExtraFilters, self).__init__(template,
+            load_all, form_class, searchqueryset, context_class,
+            results_per_page)
+        self._meta = self
+        
+        # ChangeList only uses this for URL generation, which we override anyway
+        self.pk = self
+        self.pk.attname = None
+        
+        # import pdb; pdb.set_trace()
+    
+    def queryset(self, request):
+        queryset = self.form.searchqueryset
+        # patch the object to make ChangeList happy with the WhooshSearchQuery
+        queryset.query.select_related = None
+        queryset.query.where = False
+        # print "SearchViewWithExtraFilters returning query = %s" % (
+        #     object.__str__(queryset.query))
+        return queryset
+    
     def extra_context(self):
+        # print self.form.searchqueryset.count
+        
+        from django.contrib.admin.views.main import ChangeList
+        change_list = ChangeList(request=self.request, model=self,
+            list_display=self.list_display, list_display_links=(),
+            list_filter=(), date_hierarchy=None, search_fields=(),
+            list_select_related=False, list_per_page=100,
+            list_editable=(), model_admin=self)
+        
         return {
             'is_real_search': (self.form.is_valid() and
                 len(self.form.cleaned_data) > 0),
             'count': getattr(self.form, 'count', None),
+            'change_list': change_list,
+            # 'result_headers': list(admin_list.result_headers(self)),
         }
