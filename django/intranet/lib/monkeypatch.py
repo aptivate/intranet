@@ -485,3 +485,218 @@ def save_with_debugging(original_function, self, save_m2m=True, using=None):
     original_function(self, save_m2m, using)
 # patch(django.core.serializers.base.DeserializedObject, 'save',
 #     save_with_debugging)
+
+from django.test.utils import ContextList
+def ContextList_keys(self):
+    keys = set()
+    for subcontext in self:
+        for dict in subcontext:
+            keys |= set(dict.keys())
+    return keys
+ContextList.keys = ContextList_keys
+
+from haystack.backends.whoosh_backend import WhooshSearchBackend
+def build_schema_with_debugging(original_function, self, fields):
+    """
+    print "build_schema fields = %s" % fields
+    from haystack import connections
+    
+    unified = connections[self.connection_alias].get_unified_index()
+    print "indexes = %s" % unified.indexes
+    #        self.content_field_name, self.schema = self.build_schema(connections[self.connection_alias].get_unified_index().all_searchfields())
+    print "collect_indexes = %s" % unified.collect_indexes()
+
+    print "apps = %s" % settings.INSTALLED_APPS
+
+    import inspect
+    
+    try:
+        from django.utils import importlib
+    except ImportError:
+        from haystack.utils import importlib
+
+    search_index_module = importlib.import_module("documents.search_indexes")
+    for item_name, item in inspect.getmembers(search_index_module, inspect.isclass):
+        print "%s: %s" % (item_name,
+            getattr(item, 'haystack_use_for_indexing', False))
+
+        if getattr(item, 'haystack_use_for_indexing', False):
+            # We've got an index. Check if we should be ignoring it.
+            class_path = "documents.search_indexes.%s" % (item_name)
+
+            print "excluded_index %s = %s" % (class_path,
+                class_path in unified.excluded_indexes)
+            print "excluded_indexes_id %s = %s" % (str(item_name),
+                unified.excluded_indexes_ids.get(item_name) == id(item))
+    """
+    from django.conf import settings
+    print "build_schema: settings = %s" % settings
+    print "build_schema: INSTALLED_APPS = %s" % settings.INSTALLED_APPS
+    # import pdb; pdb.set_trace()
+    return original_function(self, fields)
+# patch(WhooshSearchBackend, 'build_schema', build_schema_with_debugging)
+
+from haystack.utils.loading import UnifiedIndex
+def build_with_debugging(original_function, self, indexes=None):
+    print "UnifiedIndex build(%s)" % indexes
+    import traceback
+    traceback.print_stack()
+    original_function(self, indexes)
+    print "UnifiedIndex built: indexes = %s" % self.indexes
+# patch(UnifiedIndex, 'build', build_with_debugging)
+
+def collect_indexes_with_debugging(original_function, self):
+    from django.conf import settings
+    print "collect_indexes: settings = %s" % settings
+    print "collect_indexes: INSTALLED_APPS = %s" % settings.INSTALLED_APPS
+    # import pdb; pdb.set_trace()
+
+    from haystack import connections
+    from django.utils.module_loading import module_has_submodule
+    import inspect
+    
+    try:
+        from django.utils import importlib
+    except ImportError:
+        from haystack.utils import importlib
+
+    for app in settings.INSTALLED_APPS:
+        print "collect_indexes: trying %s" % app
+        mod = importlib.import_module(app)
+
+        try:
+            search_index_module = importlib.import_module("%s.search_indexes" % app)
+        except ImportError:
+            if module_has_submodule(mod, 'search_indexes'):
+                raise
+
+            continue
+
+        for item_name, item in inspect.getmembers(search_index_module, inspect.isclass):
+            print "collect_indexes: %s: %s" % (item_name,
+                getattr(item, 'haystack_use_for_indexing', False))
+            if getattr(item, 'haystack_use_for_indexing', False):
+                # We've got an index. Check if we should be ignoring it.
+                class_path = "%s.search_indexes.%s" % (app, item_name)
+
+                print "excluded_index %s = %s" % (class_path,
+                    class_path in self.excluded_indexes)
+                print "excluded_indexes_id %s = %s" % (str(item_name),
+                    self.excluded_indexes_ids.get(item_name) == id(item))
+
+                if class_path in self.excluded_indexes or self.excluded_indexes_ids.get(item_name) == id(item):
+                    self.excluded_indexes_ids[str(item_name)] = id(item)
+                    continue
+
+    return original_function(self)
+# patch(UnifiedIndex, 'collect_indexes', collect_indexes_with_debugging)
+
+from django.conf import LazySettings
+from django.conf import global_settings
+def configure_with_debugging(original_function, self,
+    default_settings=global_settings, **options):
+    print "LazySettings configured: %s, %s" % (default_settings, options)
+    import traceback
+    traceback.print_stack()
+    return original_function(self, default_settings, **options)
+# patch(LazySettings, 'configure', configure_with_debugging)
+
+def setup_with_debugging(original_function, self):
+    print "LazySettings setup:"
+    import traceback
+    traceback.print_stack()
+    return original_function(self)
+# patch(LazySettings, '_setup', setup_with_debugging)
+
+def before(target_class_or_module, target_method_name):
+    # must return a decorator, i.e. a function that takes one arg,
+    # which is the before_function, and returns a function (a wrapper)
+    # that uses the before_function 
+    original_function = getattr(target_class_or_module, target_method_name)
+    def decorator(before_function):
+        def wrapper_with_before(*args, **kwargs):
+            before_function(*args, **kwargs)
+            return original_function(*args, **kwargs)
+        # only now do we have access to the before_function
+        setattr(target_class_or_module, target_method_name, wrapper_with_before)
+        return wrapper_with_before
+    return decorator
+
+def breakpoint(*args, **kwargs):
+    import pdb; pdb.set_trace()
+        
+from django.contrib.admin.views.main import ChangeList
+# before(ChangeList, 'get_results')(breakpoint)
+# @before(ChangeList, 'get_results')
+"""
+def get_results_with_debugging(self, request):
+    print "get_results query = %s" % object.__str__(self.query_set.query)
+"""
+
+def after(target_class_or_module, target_method_name):
+    """
+    This decorator generator takes two arguments, a class or module to
+    patch, and the name of the method in that class (or function in that
+    module) to patch.
+    
+    It returns a decorator, i.e. a function that can be called with a
+    function as its argument (the after_function), and returns a function
+    (the wrapper_with_after) that executes the original function/method and
+    then the after_function.
+    
+    You can use this to monkey patch a class or method to execute arbitrary
+    code after a method or function returns; the original return value
+    is retained for you and you don't have to worry about it.
+    """
+       
+    original_function = getattr(target_class_or_module, target_method_name)
+    def decorator(after_function):
+        def wrapper_with_after(*args, **kwargs):
+            result = original_function(*args, **kwargs)
+            after_function(*args, **kwargs)
+            return result
+        # only now do we have access to the after_function
+        setattr(target_class_or_module, target_method_name, wrapper_with_after)
+        return wrapper_with_after
+    return decorator
+
+# Work around https://github.com/toastdriven/django-haystack/issues/495 and
+# http://south.aeracode.org/ticket/1023 by resetting the UnifiedIndex
+# after South's syncdb has run
+from south.management.commands.syncdb import Command as SouthSyncdbCommand
+@after(SouthSyncdbCommand, 'handle_noargs')
+def syncdb_handle_noargs_with_haystack_reset(self, migrate_all=False, **options):
+    from haystack import connections
+    for conn in connections.all():
+        conn.get_unified_index().reset()
+
+from intranet.binder.search import SearchViewWithExtraFilters
+# after(SearchViewWithExtraFilters, 'queryset')(breakpoint)
+
+def modify_return_value(target_class_or_module, target_method_name):
+    """
+    This decorator generator takes two arguments, a class or module to
+    patch, and the name of the method in that class (or function in that
+    module) to patch.
+    
+    It returns a decorator, i.e. a function that can be called with a
+    function as its argument (the after_function), and returns a function
+    (the wrapper_with_after) that executes the original function/method and
+    then the after_function.
+    
+    You can use this to monkey patch a class or method to execute arbitrary
+    code after a method or function returns. Your method is called with one
+    additional parameter at the beginning, which is the return value of the
+    original function; the value that you return becomes the new return value.
+    """
+       
+    original_function = getattr(target_class_or_module, target_method_name)
+    def decorator(after_function):
+        def wrapper_with_after(*args, **kwargs):
+            result = original_function(*args, **kwargs)
+            result = after_function(result, *args, **kwargs)
+            return result
+        # only now do we have access to the after_function
+        setattr(target_class_or_module, target_method_name, wrapper_with_after)
+        return wrapper_with_after
+    return decorator
