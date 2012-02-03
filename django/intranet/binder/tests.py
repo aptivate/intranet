@@ -14,6 +14,16 @@ import documents.urls
 import binder.templatetags.menu as menu_tag
 
 class BinderTest(TestCase):
+    def setUp(self):
+        TestCase.setUp(self)
+        from django.conf import settings
+        from haystack.constants import DEFAULT_ALIAS
+        settings.HAYSTACK_CONNECTIONS[DEFAULT_ALIAS]['PATH'] = '/dev/shm/whoosh'
+        # from shutil import rmtree
+        # rmtree(settings.HAYSTACK_CONNECTIONS[DEFAULT_ALIAS]['PATH'])
+        from haystack import connections
+        connections[DEFAULT_ALIAS].get_backend().delete_index()
+        
     def test_front_page(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
