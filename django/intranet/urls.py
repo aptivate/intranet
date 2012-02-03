@@ -43,6 +43,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^search/', include(haystack.urls)),
     url(r'^search/', SearchViewWithExtraFilters(form_class=SearchFormWithAllFields),
-        name='haystack_search'),
+        name='search'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

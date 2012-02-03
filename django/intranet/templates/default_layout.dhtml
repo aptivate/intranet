@@ -25,7 +25,7 @@
 				<td class="padding"></td>
 
 				<td class="search-box">
-					<form method="get" action="{% url haystack_search %}">
+					<form method="get" action="{% url search %}">
 						{% comment %}<span class="search-for">Search for:</span>{% endcomment %}
 						<span class="search-input">{{ global.search.q }}</span>
 						{% comment %}<span class="search-models">{{ global.search.models }}</span>{% endcomment %}
