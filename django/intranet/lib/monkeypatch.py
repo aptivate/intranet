@@ -668,7 +668,9 @@ from south.management.commands.syncdb import Command as SouthSyncdbCommand
 def syncdb_handle_noargs_with_haystack_reset(self, migrate_all=False, **options):
     from haystack import connections
     for conn in connections.all():
+        conn.get_unified_index().teardown_indexes()
         conn.get_unified_index().reset()
+        conn.get_unified_index().setup_indexes()
 
 from intranet.binder.search import SearchViewWithExtraFilters
 # after(SearchViewWithExtraFilters, 'queryset')(breakpoint)
@@ -700,3 +702,6 @@ def modify_return_value(target_class_or_module, target_method_name):
         setattr(target_class_or_module, target_method_name, wrapper_with_after)
         return wrapper_with_after
     return decorator
+
+# from haystack.indexes import RealTimeSearchIndex
+# before(RealTimeSearchIndex, '_setup_save')(breakpoint)
