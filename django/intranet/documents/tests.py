@@ -8,20 +8,19 @@ Replace this with more appropriate tests for your application.
 from StringIO import StringIO
 from lxml import etree
 
-from django.test import TestCase
-from django.contrib import admin 
-from binder.models import IntranetUser
-from django.contrib.auth import login
 from django.conf import settings as django_settings
+from django.contrib import admin 
+from django.contrib.auth import login
+from django.core.files.base import ContentFile
 from django.core.urlresolvers import reverse
 from django.test.client import Client, RequestFactory, encode_multipart, \
     MULTIPART_CONTENT, BOUNDARY
-
 from django.utils.functional import curry
 
+from lib.test_utils import AptivateEnhancedTestCase
 from documents.admin import DocumentAdmin
 from documents.models import Document, DocumentType
-from binder.models import Program
+from binder.models import IntranetUser, Program
 
 class SuperClient(Client):
     def get(self, *args, **extra):
@@ -105,38 +104,21 @@ class SuperClient(Client):
         # print "request = %s" % request
         return Client.request(self, **request)
 
-class DocumentsModuleTest(TestCase):
+class DocumentsModuleTest(AptivateEnhancedTestCase):
     fixtures = ['test_permissions', 'test_users']
     
-    """
-    def wrap(self, instance, method_name):
-        old_method = getattr(instance, method_name)
-        
-        def new_method(*args):
-            print("%s.%s(%s)" % (instance, method_name, args))
-            self.last_method = method_name
-            self.last_method_args = args
-            response = old_method(*args)
-            x = '<?xml version="1.0" encoding="utf-8"?>' + "\n" + response.content
-            p = etree.XMLParser(remove_blank_text=True, resolve_entities=False)
-            r = etree.fromstring(x, p)
-            setattr(response, 'parsed', r)
-            return response
-        
-        setattr(instance, method_name, new_method)
-    """
-     
     def setUp(self):
+        super(DocumentsModuleTest, self).setUp()
+        
+        self.client = SuperClient()
         self.john = IntranetUser.objects.get(username='john')
 
         # run a POST just to get a response with its embedded request...
         self.login()
         response = self.client.post(reverse('admin:documents_document_add'))
         # fails with PermissionDenied if our permissions are wrong
-        self.client = SuperClient()
 
-        from search_indexes import DocumentIndex
-        self.index = DocumentIndex()
+        self.index = self.unified_index.get_index(Document) 
     
     def login(self):
         self.assertTrue(self.client.login(username=self.john.username,
@@ -149,10 +131,11 @@ class DocumentsModuleTest(TestCase):
         
     def test_create_document_object(self):
         doc = Document(title="foo", document_type=DocumentType.objects.all()[0],
-            file="whee", notes="bonk")
-        doc.save()
+            notes="bonk")
+        doc.file.save(name="whee", content=ContentFile("wee willy wonka"))
         doc.programs = Program.objects.all()[:2]  
         doc.authors = [self.john.id]
+
         self.assertItemsEqual([doc], Document.objects.all())
 
     def test_document_admin_class(self):
@@ -193,7 +176,8 @@ class DocumentsModuleTest(TestCase):
         f = StringIO('foobar')
         setattr(f, 'name', 'boink.png')
 
-        # without login, should fail and tell us to log in        
+        # without login, should fail and tell us to log in
+        self.client.logout()        
         response = self.client.post(reverse('admin:documents_document_add'),
             {
                 'title': 'foo',
@@ -243,14 +227,6 @@ class DocumentsModuleTest(TestCase):
             "Wrong name on uploaded file")
         self.assertEqual('whee', doc.notes)
         self.assertItemsEqual([self.john], doc.authors.all())
-    
-    def assign_fixture_to_filefield(self, fixture_file_name, filefield):
-        from django.core.files import File as DjangoFile
-        import os.path
-        path = os.path.join(os.path.dirname(__file__), 'fixtures',
-            fixture_file_name)
-        df = DjangoFile(open(path))
-        filefield.save(fixture_file_name, df, save=False) 
     
     def test_word_2003_document_indexing(self):
         doc = Document()
@@ -329,3 +305,22 @@ class DocumentsModuleTest(TestCase):
             "adipiscing elit.\nPraesent pharetra urna eu arcu blandit " +
             "nec pretium odio fermentum. Sed in orci quis risus interdum " +
             "lacinia ut eu nisl.\n\n\n", self.index.prepare_text(doc))
+
+    def test_document_page_changelist(self):
+        doc = Document(title='foo', document_type=DocumentType.objects.all()[0],
+            notes="bonk")
+        # from lib.monkeypatch import breakpoint
+        # breakpoint()
+        doc.file.save(name="foo", content=ContentFile("foo bar baz"))
+        
+        response = self.client.post(reverse('search'), {'q': 'foo'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('change_list', response.context,
+            "No change_list in response context: %s" % response.context.keys())
+        change_list = response.context['change_list']
+
+        results = change_list.result_list
+        self.assertEqual(1, len(results), "Unexpected search results: %s" %
+            results)
+        from haystack.utils import get_identifier
+        self.assertEqual(get_identifier(doc), results[0].id)
