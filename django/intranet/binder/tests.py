@@ -13,17 +13,9 @@ import settings
 import documents.urls
 import binder.templatetags.menu as menu_tag
 
-class BinderTest(TestCase):
-    def setUp(self):
-        TestCase.setUp(self)
-        from django.conf import settings
-        from haystack.constants import DEFAULT_ALIAS
-        settings.HAYSTACK_CONNECTIONS[DEFAULT_ALIAS]['PATH'] = '/dev/shm/whoosh'
-        # from shutil import rmtree
-        # rmtree(settings.HAYSTACK_CONNECTIONS[DEFAULT_ALIAS]['PATH'])
-        from haystack import connections
-        connections[DEFAULT_ALIAS].get_backend().delete_index()
-        
+from lib.test_utils import AptivateEnhancedTestCase
+
+class BinderTest(AptivateEnhancedTestCase):
     def test_front_page(self):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
@@ -52,9 +44,8 @@ class BinderTest(TestCase):
             menu_tag.menu_item(context, 'front_page', 'Home'))
 
     def test_search_results_page_changelist(self):
-        response = self.client.post(reverse('search'), {'q': 'dogs'})
+        response = self.client.post(reverse('search'), {'q': 'foo'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual('search/search.html', response.template[0].name)
         self.assertIn('change_list', response.context,
             "No change_list in response context: %s" % response.context.keys())
-        
