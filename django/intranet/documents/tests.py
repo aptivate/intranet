@@ -319,8 +319,32 @@ class DocumentsModuleTest(AptivateEnhancedTestCase):
             "No change_list in response context: %s" % response.context.keys())
         change_list = response.context['change_list']
 
-        results = change_list.result_list
+        results = change_list.result_list        
         self.assertEqual(1, len(results), "Unexpected search results: %s" %
             results)
         from haystack.utils import get_identifier
         self.assertEqual(get_identifier(doc), results[0].id)
+        print object.__str__(results[0])
+        self.assertEqual(doc.get_absolute_url(),
+            change_list.url_for_result(results[0]))
+        
+        from django.contrib.admin.util import lookup_field
+        print lookup_field('title', results[0], change_list.model_admin)
+
+        from django.contrib.admin.templatetags import admin_list
+        result_list_tag_ctx = admin_list.result_list(change_list)
+        headers = result_list_tag_ctx['result_headers']
+        
+        self.assertDictContainsSubset({
+            "text": "Title",
+            "sortable": True,
+            "url": change_list.get_query_string({admin_list.ORDER_VAR: 0,
+                admin_list.ORDER_TYPE_VAR: 'asc'}),
+            "class_attrib": ' class="sorted descending"'
+        }, headers[0], "wrong details for column 1");
+        
+        self.assertIsNone(change_list.formset)
+        results = result_list_tag_ctx['results']
+        print repr(results[0])
+        self.assertEqual('<th><a href="%s">%s</a></th>' %
+            (doc.get_absolute_url(), doc.title), results[0][0])

@@ -36,7 +36,7 @@
 				<td>{{ form.q }}</td>
 				<td class="search-programs">{{ form.programs }}</td>
 				<td class="search-doctypes">{{ form.document_types }}</td>
-				<td><input type="submit" value="Search"></td>
+				<td><input type="submit" value="Search" /></td>
 			</tr>
 		</table>
 
@@ -45,15 +45,28 @@
 
 			{% if page.object_list %}
 				<table class="ruled">
-				{% for result in page.object_list %}
-					<tr>
-						<th>{{ result.verbose_name }}</th>
-						<td>{{ result.pk }}</td>
-						<td><a href="{{ result.object.get_absolute_url }}">{{ result.title }}</a></td>
-						<td>{{ result.score }}</td>
-					</tr>
-				{% endfor %}
+					<thead>
+						<tr>
+							{% for header in result_headers %}<th scope="col"{{ header.class_attrib }}>
+							{% if header.sortable %}<a href="{{ header.url }}">{% endif %}
+							{{ header.text|capfirst }}
+							{% if header.sortable %}</a>{% endif %}</th>{% endfor %}
+						</tr>
+					</thead>
+					<tbody>
+						{% for result in page.object_list %}
+							<tr>
+								<th>{{ result.verbose_name }}</th>
+								<td>{{ result.pk }}</td>
+								<td><a href="{{ result.object.get_absolute_url }}">{{ result.title }}</a></td>
+								<td>{{ result.score }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
 				</table>
+				{% comment %}
+					{% result_list change_list %}
+				{% endcomment %}
 			{% else %}
 				<p>No results found.</p>
 			{% endif %}

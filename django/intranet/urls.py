@@ -42,7 +42,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     # url(r'^search/', include(haystack.urls)),
-    url(r'^search/', SearchViewWithExtraFilters(form_class=SearchFormWithAllFields),
-        name='search'),
+    url(r'^search/', SearchViewWithExtraFilters(), name='search'),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
