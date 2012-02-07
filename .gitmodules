@@ -7,3 +7,6 @@
 [submodule "django-tables2"]
 	path = django-tables2
 	url = git://github.com/aptivate/django-tables2.git
+[submodule "django/intranet/binder"]
+	path = django/intranet/binder
+	url = git://github.com/aptivate/intranet-binder.git
