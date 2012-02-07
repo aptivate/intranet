@@ -3,6 +3,8 @@ from django.contrib.admin.templatetags import admin_list
 from django import forms
 from django.db import models as fields
 from django.forms.widgets import SelectMultiple
+from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 
 from haystack import connections, connection_router
 from haystack.backends import SQ, BaseSearchQuery
@@ -13,18 +15,14 @@ from haystack.models import SearchResult
 from haystack.query import SearchQuerySet, AutoQuery
 from haystack.views import SearchView
 
-from binder.models import Program
+from binder.models import Program, IntranetUser
 from documents.models import DocumentType
+
+import django_tables2 as tables
 
 haystack = connections[DEFAULT_ALIAS].get_unified_index()
 all_fields = haystack.all_searchfields()
 # print "unified index = %s" % haystack
-
-class SearchResultWithModelCompatibility(SearchResult):
-    def serializable_value(self, field_name):
-        print "%s.serializable_value(%s) = %s" % (self, field_name,
-            getattr(self, field_name))
-        return getattr(self, field_name)
 
 class SearchQuerySetWithAllFields(SearchQuerySet):
     def __init__(self, site=None, query=None, fields=None, meta=None):
@@ -41,20 +39,11 @@ class SearchQuerySetWithAllFields(SearchQuerySet):
         self.fields = fields
         # import pdb; pdb.set_trace()
 
-        print "sqs init (%s): meta = %s" % (self, meta)
-        import traceback
-        traceback.print_stack()
+        # print "sqs init (%s): meta = %s" % (self, meta)
+        # import traceback
+        # traceback.print_stack()
         
-        class SearchResultWithMeta(SearchResultWithModelCompatibility):
-            _meta = meta
-
-            def _clone(self, klass=None):
-                result = super(SearchQuerySet, self)._clone(klass)
-                result._meta = meta
-                print "clone (%s): set _meta to %s" % (self, meta)
-                return result
-        
-        self.query.set_result_class(SearchResultWithMeta)
+        # self.query.set_result_class(SearchResultWithExtraFields)
         
     def auto_query_custom(self, **kwargs):
         """
@@ -66,7 +55,7 @@ class SearchQuerySetWithAllFields(SearchQuerySet):
         return self.filter(**kwargs)
     
     def filter(self, **kwargs):
-        # print "enter filter: old query = %s" % self.query
+        print "enter filter: old query = %s" % self.query
         
         for param_name, param_value in kwargs.iteritems():
             dj = BaseSearchQuery()
@@ -92,15 +81,8 @@ class SearchQuerySetWithAllFields(SearchQuerySet):
             else:
                 self.query.add_filter(SQ({param_name: param_value}))
         
-        # print "exit filter: new query = %s" % self.query
+        print "exit filter: new query = %s" % self.query
         return self
-    
-    def order_by(self, *args):
-        """Alters the order in which the results should appear."""
-        result = super(SearchQuerySetWithAllFields, self).order_by(*args)
-        result.query.select_related = self.query.select_related
-        result.query.where = self.query.where
-        return result
 
 class SelectMultipleWithJquery(SelectMultiple):
     def __init__(self, attrs=None, choices=(), html_name=None):
@@ -139,12 +121,12 @@ class SearchFormWithAllFields(ModelSearchForm):
         # print "SearchFormWithAllFields initialised"
 
     def search(self):
-        # print "search starting"
-        # print "programs = %s" % self.cleaned_data.get("programs")
+        print "search starting"
+        print "programs = %s" % self.cleaned_data.get("programs")
         
         if not self.is_valid():
-            # print "invalid form"
-            return self.no_query_found()
+            print "invalid form"
+            return None
         
         kwargs = {}
 
@@ -158,7 +140,8 @@ class SearchFormWithAllFields(ModelSearchForm):
             kwargs['document_type'] = self.cleaned_data.get('document_types')
             
         if not kwargs:
-            return self.no_query_found()
+            print "no search"
+            return None
     
         sqs = self.searchqueryset.auto_query_custom(**kwargs)
         
@@ -174,84 +157,65 @@ class SearchList(ChangeList):
     def url_for_result(self, result):
         return result.object.get_absolute_url()
 
-class SearchViewWithExtraFilters(SearchView):
-    list_display = ('title', )
-    ordering = ['-title']
-    verbose_name = "search result"
-    object_name = 'SearchViewWithExtraFilters'
-
-    from django.core.paginator import Paginator
-    paginator = Paginator
-
-    fields = {
-        'title': fields.TextField(),
-    }
+class SearchTable(tables.Table):
+    title = tables.Column(verbose_name="Title")
+    authors = tables.Column(verbose_name="Authors")
+    created = tables.Column(verbose_name="Date Added")
+    programs = tables.Column(verbose_name="Programs")
+    document_type = tables.Column(verbose_name="Document Type")
+    score = tables.Column(verbose_name="Score")
     
+    def render_title(self, value, record):
+        print "record = %s (%s)" % (record, dir(record))
+        return mark_safe("<a href='%s'>%s</a>" % (record.object.get_absolute_url(),
+            value))
+
+    def render_authors(self, value):
+        users = IntranetUser.objects.in_bulk(value)
+        return ', '.join([users[long(i)].full_name for i in value])
+    
+    def render_programs(self, value):
+        programs = Program.objects.in_bulk(value)
+        return ', '.join([programs[long(i)].name for i in value])
+    
+    def render_document_type(self, value):
+        return DocumentType.objects.get(id=value).name
+    
+    class Meta:
+        attrs = {'class': 'paleblue'}
+            
+class SearchViewWithExtraFilters(SearchView):
+    prefix = 'results_'
+    page_field = 'page'
+
     from django.template import RequestContext
     
-    def get_field(self, name):
-        return self.fields[name]
-    
-    def get_field_by_name(self, name):
-        return (self.fields[name],)
-
-    def get_paginator(self, request, queryset, per_page, orphans=0, allow_empty_first_page=True):
-        return self.paginator(queryset, per_page, orphans, allow_empty_first_page)
-    
-    def __init__(self, template=None, load_all=True, form_class=None, 
-        searchqueryset=None, context_class=RequestContext, 
+    def __init__(self, template=None, load_all=True, 
+        form_class=SearchFormWithAllFields,
+        searchqueryset=None, context_class=RequestContext,
         results_per_page=None):
         
-        if form_class is None:
-            form_class = SearchFormWithAllFields
-            
-        super(SearchViewWithExtraFilters, self).__init__(template,
-            load_all, form_class, searchqueryset, context_class,
-            results_per_page)
-        
-        # ChangeList only uses this for URL generation, which we override anyway
-        self.pk = self
-        self.pk.attname = 'id'
-        self._meta = self
-        
-        # import pdb; pdb.set_trace()
-        
-        from django.forms.forms import pretty_name
-        for name, field in self.fields.iteritems():
-            if field.verbose_name is None:
-                field.verbose_name = pretty_name(name)
-            field.set_attributes_from_name(name)
-    
-    def queryset(self, request):
-        queryset = self.form.searchqueryset
-        # patch the object to make ChangeList happy with the WhooshSearchQuery
-        queryset.query.select_related = None
-        queryset.query.where = False
-        # print "SearchViewWithExtraFilters returning query = %s" % (
-        #     object.__str__(queryset.query))
-        return queryset
-    
+        super(SearchViewWithExtraFilters, self).__init__(template, load_all,
+            form_class, searchqueryset, context_class, results_per_page)
+
+    def create_response(self):
+        if self.results is None:
+            return render_to_response(self.template, dict(form=self.form),
+                context_instance=self.context_class(self.request))
+        else:
+            return super(SearchViewWithExtraFilters, self).create_response() 
+
     def extra_context(self):
-        # print self.form.searchqueryset.count
-        
-        change_list = SearchList(request=self.request, model=self,
-            list_display=self.list_display, list_display_links=(),
-            list_filter=(), date_hierarchy=None, search_fields=(),
-            list_select_related=False, list_per_page=100,
-            list_editable=(), model_admin=self)
-        change_list.formset = None
+        results_table = SearchTable(self.form.searchqueryset,
+            prefix=self.prefix, page_field=self.page_field)
+        current_page = self.request.GET.get(results_table.prefixed_page_field, 1)
+        results_table.paginate(page=current_page)
         
         return {
             'is_real_search': (self.form.is_valid() and
                 len(self.form.cleaned_data) > 0),
             'count': getattr(self.form, 'count', None),
-            'change_list': change_list,
+            'results_table': results_table,
+            'request': self.request,
             # 'result_headers': list(admin_list.result_headers(self)),
         }
-
-    def build_form(self, form_kwargs=None):
-        if form_kwargs is None:
-            form_kwargs = {}
-        if 'searchqueryset' not in form_kwargs:
-            form_kwargs['searchqueryset'] = SearchQuerySetWithAllFields(meta=self)
-        return super(SearchViewWithExtraFilters, self).build_form(form_kwargs)
