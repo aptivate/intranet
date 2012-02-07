@@ -4,3 +4,6 @@
 [submodule "python-tika"]
 	path = python-tika
 	url = git://github.com/aptivate/python-tika.git
+[submodule "django-tables2"]
+	path = django-tables2
+	url = git://github.com/aptivate/django-tables2.git

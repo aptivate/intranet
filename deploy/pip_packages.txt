@@ -15,3 +15,4 @@ pdfminer==20110515
 # it must be installed on the host using puppet or
 # pip install git+git://github.com/aptivate/jcc.git
 ../python-tika
+../django-tables2
