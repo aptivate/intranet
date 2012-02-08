@@ -70,7 +70,7 @@ def execute_manager(settings_mod, argv=None):
     project-specific django-admin.py utility.
     """
     setup_environ(settings_mod)
-    import lib.monkeypatch
+    import binder.monkeypatch
     utility = ManagementUtility(argv)
     utility.execute()
 
