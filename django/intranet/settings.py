@@ -76,7 +76,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(os.path.dirname(__file__), 'site_media'),
 )
 
 # List of finder classes that know how to find static files in
@@ -124,12 +123,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'binder',
     'documents',
-    # Uncomment the next line to enable the admin:
+    'search',
     'django.contrib.admin',
     'south',
     'haystack',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'django_tables2',
 )
 
 HAYSTACK_CONNECTIONS = {
@@ -138,9 +138,6 @@ HAYSTACK_CONNECTIONS = {
         'PATH': os.path.join(os.path.dirname(__file__), 'search_index'),
     },
 }
-
-# You can override this in local_settings.py(.*) 
-DOCTOTEXT_PATH = '/usr/local/bin/doctotext.sh'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -169,7 +166,10 @@ from django.conf import global_settings
 
 TEMPLATE_CONTEXT_PROCESSORS = \
     list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
-    ['lib.context.intranet_global']
+    [
+        'binder.context.additions',
+        'search.context.additions',
+    ]
 
 AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
 
