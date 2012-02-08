@@ -13,3 +13,6 @@
 [submodule "django/intranet/documents"]
 	path = django/intranet/documents
 	url = git://github.com/aptivate/intranet-documents.git
+[submodule "django/intranet/search"]
+	path = django/intranet/search
+	url = git://github.com/aptivate/intranet-search.git
