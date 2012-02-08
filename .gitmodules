@@ -10,3 +10,6 @@
 [submodule "django/intranet/binder"]
 	path = django/intranet/binder
 	url = git://github.com/aptivate/intranet-binder.git
+[submodule "django/intranet/documents"]
+	path = django/intranet/documents
+	url = git://github.com/aptivate/intranet-documents.git
