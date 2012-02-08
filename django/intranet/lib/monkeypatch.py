@@ -672,9 +672,6 @@ def syncdb_handle_noargs_with_haystack_reset(self, migrate_all=False, **options)
         conn.get_unified_index().reset()
         conn.get_unified_index().setup_indexes()
 
-from intranet.binder.search import SearchViewWithExtraFilters
-# after(SearchViewWithExtraFilters, 'queryset')(breakpoint)
-
 def modify_return_value(target_class_or_module, target_method_name):
     """
     This decorator generator takes two arguments, a class or module to
