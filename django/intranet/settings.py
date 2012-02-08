@@ -98,7 +98,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    'binder.session.SessionMiddlewareWithIntranetUser',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -172,6 +172,8 @@ TEMPLATE_CONTEXT_PROCESSORS = \
     ]
 
 AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
+SESSION_ENGINE = 'binder.session'
+SESSION_SAVE_EVERY_REQUEST = True
 
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
