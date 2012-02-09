@@ -18,3 +18,4 @@ django/intranet/uploads
 django/intranet/apache-tika.log
 doc
 */.svn/tmp
+hs_err_*
