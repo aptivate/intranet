@@ -1,18 +1,19 @@
 Django==1.3
 mysql-python==1.2.3
 south==0.7.3
+
+# use bleeding edge haystack to help fix bugs in it:
 # django-haystack==1.2.6
-git+git://github.com/aptivate/django-haystack.git
+git+git://github.com/aptivate/django-haystack.git#egg=haystack
+
+# search engine for haystack:
 Whoosh==2.3.2
-python-magic
+
 lxml==2.3.3
-# docx==0.1.2
-http://github.com/mikemaccana/python-docx/tarball/master
-# ooxml==0.2.1
-PIL==1.1.7
-pdfminer==20110515
+
 # jcc needs to be installed before we can install tika, so
 # it must be installed on the host using puppet or
 # pip install git+git://github.com/aptivate/jcc.git
-../python-tika
--e ../django-tables2
+../django/python-tika
+
+-e ../django/django-tables2
