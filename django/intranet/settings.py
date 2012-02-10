@@ -175,6 +175,11 @@ AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
 SESSION_ENGINE = 'binder.session'
 SESSION_SAVE_EVERY_REQUEST = True
 
+LOGIN_URL = '/login'
+LOGOUT_URL = '/logout'
+LOGIN_REDIRECT_URL = '/'
+
+
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
 from private_settings import *
