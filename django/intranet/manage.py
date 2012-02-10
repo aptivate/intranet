@@ -69,7 +69,12 @@ def execute_manager(settings_mod, argv=None):
     Like execute_from_command_line(), but for use by manage.py, a
     project-specific django-admin.py utility.
     """
-    setup_environ(settings_mod)
+    
+    # don't add the project directory to the environment, as this ends
+    # up importing classes using the project name, and self.assertIsInstance
+    # requires us to specify the project name, making our tests non-portable.
+    # setup_environ(settings_mod)
+    
     import binder.monkeypatch
     utility = ManagementUtility(argv)
     utility.execute()

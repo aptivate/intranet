@@ -105,7 +105,7 @@ MIDDLEWARE_CLASSES = (
     # 'djangovalidation.middleware.HTMLValidationMiddleware',
 )
 
-ROOT_URLCONF = 'intranet.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
