@@ -16,3 +16,6 @@
 [submodule "django/intranet/search"]
 	path = django/intranet/search
 	url = git://github.com/aptivate/intranet-search.git
+[submodule "django/haystack2"]
+	path = django/haystack2
+	url = git://github.com/aptivate/django-haystack.git

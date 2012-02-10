@@ -4,7 +4,7 @@ south==0.7.3
 
 # use bleeding edge haystack to help fix bugs in it:
 # django-haystack==1.2.6
-git+git://github.com/aptivate/django-haystack.git#egg=haystack
+-e ../django/haystack2
 
 # search engine for haystack:
 Whoosh==2.3.2
