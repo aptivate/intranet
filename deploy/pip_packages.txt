@@ -16,4 +16,4 @@ lxml==2.3.3
 # pip install git+git://github.com/aptivate/jcc.git
 ../django/python-tika
 
--e ../django/django-tables2
+-e ../django/tables2

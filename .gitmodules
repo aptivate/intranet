@@ -19,3 +19,6 @@
 [submodule "django/haystack2"]
 	path = django/haystack2
 	url = git://github.com/aptivate/django-haystack.git
+[submodule "django/tables2"]
+	path = django/tables2
+	url = git://github.com/aptivate/django-tables2.git
