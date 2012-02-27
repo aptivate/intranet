@@ -60,7 +60,7 @@ MEDIA_URL = '/uploads/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(os.path.dirname(__file__), 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -137,6 +137,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'search.whoosh_backend.CustomWhooshEngine',
         'PATH': os.path.join(os.path.dirname(__file__), 'search_index'),
         'INCLUDE_SPELLING': True,
+        'SILENTLY_FAIL': False,
     },
 }
 
@@ -179,7 +180,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
 LOGIN_REDIRECT_URL = '/'
-
+# LOGIN_REDIRECT_URL = '/documents/'
 
 # tasks.py expects to find local_settings.py so the database stuff is there
 from local_settings import *
