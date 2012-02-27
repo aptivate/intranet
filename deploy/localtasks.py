@@ -1,5 +1,5 @@
 import sys, os, stat
-from tasklib import env
+from tasklib import env, _manage_py
 
 def post_deploy(environment=None):
     sys.path.append(env['django_dir'])
@@ -26,3 +26,6 @@ def post_deploy(environment=None):
     except ImportError, e:
         # no HAYSTACK_CONNECTIONS? not a fatal error
         print "No HAYSTACK_CONNECTIONS found: %s" % e
+        
+    _manage_py(["collectstatic", "--noinput"])
+
