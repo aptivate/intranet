@@ -25,6 +25,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = project_name + '.settings'
 # os.environ['PROJECT_NAME_HOME'] = '/var/django/project_name/dev/'
 os.environ[project_name.upper() + '_HOME'] = os.path.join('/var/django', project_name, 'dev')
 
+import tika
+tika.initVM()
+
 import binder.monkeypatch
 
 import django.core.handlers.wsgi
