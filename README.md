@@ -64,7 +64,7 @@ You need to download an LXML binary package for Windows. This needs to
 match the version of Python installed by BitNami, currently 2.6. You
 can install that version using this command:
 
-	easy_install http://pypi.python.org/packages/2.6/l/lxml/lxml-2.3-py2.6-win32.egg#md5=450a455c9ec8d348e1cb05cf7df80ab3
+	easy_install lxml==2.3
 
 If that doesn't work, check the [available downloads](http://pypi.python.org/pypi/lxml/2.3#downloads)
 for one that works with your BitNami's version of Python.
@@ -87,6 +87,24 @@ of Python already installed on the system. Note that
 and you should not use it unless you want to manually hack the manifests
 with `mt.exe`.
 
+Similarly, if you want to use the Active Directory integration, you need
+to download and install `python-ldap` from
+[Christoph Gohlke](http://www.lfd.uci.edu/~gohlke/pythonlibs/#python-ldap).
+
+Note that the current official version of `python-ldap` on
+[PyPI](http://pypi.python.org/pypi/python-ldap/) (2.4.10) appears to be broken.
+You cannot load the library after installation due to a DLL error. So
+please don't install that version:
+
+    Python 2.6.2 (r262:71605, Apr 14 2009, 22:40:02) [MSC v.1500 32 bit (Intel)] on win32
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import ldap
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "c:\Program Files\BitNami DjangoStack\python\lib\site-packages\ldap\__init__.py", line 22, in <module>
+        from ldap._ldap import *
+    ImportError: DLL load failed: This application has failed to start because the application configuration is incorrect. Reinstalling the application may fix this problem.
+
 ### Installing the Intranet
 
 You need to know where to get the files from. This is most likely a Git
@@ -101,12 +119,13 @@ We will assume that you need to check out the code from a Git repository.
 Install the latest version of [MSYS Git](http://code.google.com/p/msysgit/downloads/list).
 During the installation, be sure to select *Run Git from the Windows command prompt*.
 
-If you need write access to the repository, follow
-[these instructions](http://help.github.com/win-set-up-git/#_set_up_ssh_keys)
-to generate a new `id_rsa.pub`, and give it to the administrator who controls
-the repository you want to write to. You don't need to add it to GitHub.
+If you need access to a private repository, follow
+[these instructions](https://help.github.com/articles/generating-ssh-keys)
+to generate a new `id_rsa.pub` file. Skip *Step 4: Add your SSH key to GitHub*, and
+send the `id_rsa.pub` file to the administrator who controls the repository
+you want to access.
 
-Run the *Git GUI* (from Start/Programs/Git) and choose *Clone Existing Repository*. 
+Run the *Git GUI* (from Start/Programs/Git) and choose *Clone Existing Repository*.
 For the *Source Location*, enter the Git repository URL that you were given,
 for example: `git://github.com/aptivate/intranet.git`. For the *Target Directory*,
 click on the *Browse* button, navigate to *C:/Program Files/BitNami DjangoStack/apps*,
@@ -127,6 +146,16 @@ Start a Windows deployment:
 It should end like this, anything else is an error:
 
 	** Finished deploying intranet for windows.
+
+If it fails with the following error:
+
+	WindowsError: [Error 14001] This application has failed to start because the application configuration is incorrect. Reinstalling the application may fix this problem
+
+That's due to a [bug in virtualenv](https://github.com/pypa/virtualenv/issues/294). It seems that you can fix it with the following commands:
+
+	pip uninstall virtualenv
+	pip install git+git://github.com/aptivate/virtualenv.git
+	del /s/q django\intranet\.ve
 
 Create a user that you can use to log into the Intranet:
 
