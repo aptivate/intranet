@@ -45,7 +45,7 @@ During the installation you will need to choose a MySQL password. **DO NOT**
 leave it blank and **DO** write it down somewhere safe and secure!
 
 Say *Yes* to associating .py files with the Python interpreter, and *No* to
-creating a default project.
+*Do you want to set up an initial project*.
 
 Add the following directories to your PATH:
 
@@ -99,11 +99,12 @@ We will assume that you need to check out the code from a Git repository.
 ### Downloading the application using Git
 
 Install the latest version of [MSYS Git](http://code.google.com/p/msysgit/downloads/list).
+During the installation, be sure to select *Run Git from the Windows command prompt*.
 
 If you need write access to the repository, follow
 [these instructions](http://help.github.com/win-set-up-git/#_set_up_ssh_keys)
 to generate a new `id_rsa.pub`, and give it to the administrator who controls
-the repository you want to write to.
+the repository you want to write to. You don't need to add it to GitHub.
 
 Run the *Git GUI* (from Start/Programs/Git) and choose *Clone Existing Repository*. 
 For the *Source Location*, enter the Git repository URL that you were given,
@@ -134,8 +135,8 @@ Create a user that you can use to log into the Intranet:
 Load any fixtures that you've been told to load, for example:
 
 	cd django\intranet
-	python manage.py loaddata atamis\intranet\ata_groups.json
-	python manage.py loaddata atamis\intranet\ata_programs.json
+	python manage.py loaddata atamis\fixtures\ata_groups.json
+	python manage.py loaddata atamis\fixtures\ata_programs.json
 
 Run the Intranet using the test server:
 
@@ -158,8 +159,13 @@ reliably and start automatically when the system is started.
 
 [Download the latest stable version of Tomcat 7](http://tomcat.apache.org/download-70.cgi).
 We recommend downloading the 32-bit/64-bit Windows Service Installer. Run
-the installer to install the application. When the installation finishes,
-open [http://localhost:8080/](http://localhost:8080/) in your browser and
+the installer to install the application. 
+
+During the installation, enter a Tomcat Administrator User name and Password,
+and record them somewhere safe and secure.
+
+When the installation finishes, open
+[http://localhost:8080/](http://localhost:8080/) in your browser and
 check that it shows a page saying *If you're seeing this, you've
 successfully installed Tomcat. Congratulations!*.
 
@@ -167,9 +173,10 @@ Now use Windows Explorer to find:
 
 	C:\Program Files\BitNami DjangoStack\apps\intranet\java\tika-server-1.1-SNAPSHOT.war
 
-Copy it to:
+Copy it to whichever of the following directories exists:
 
 	C:\Program Files\Apache Software Foundation\Tomcat 7.0\webapps
+	C:\Program Files (x86)\Apache Software Foundation\Tomcat 7.0\webapps
 
 And rename it to `tika.war`. Watch that directory, in a few seconds you
 should see a directory called `tika` magically appear, as Tomcat unpacks
@@ -183,6 +190,31 @@ When you see that, your installation should be finished! Try uploading some
 documents to the intranet to check that it works, and the contents are
 properly extracted and indexable.
 
+Open *Control Panel/Administrative Tools/Services*, find the
+*Apache Tomcat* service and double-click on it. If it's not started,
+click on the Start button. Check that the *Startup type* is set to
+*Automatic*.
 
+### Error R6034
 
+You may get the following pop-up error message while using the Intranet:
 
+	Program: C:\PROGRA~1\BITNAM~1\apache2\bin\httpd.exe
+	R6034
+	An application has made an attempt to load the C runtime library incorrectly.
+
+This seems to be caused by BitNami DjangoStack distributing its own copy
+of the Microsoft C runtime, which can conflict with the version installed
+on the system. It seems to happen the first time that the application uses a
+native library, for example when uploading a new image or document.
+
+You can try the following steps to disable BitNami's copy of the C runtime:
+
+* Go into `C:\Program Files\BitNami DjangoStack\apache2\bin`
+* Create a directory called `disabled`
+* Move all the `msvc*.dll` and `Microsoft.VC90` files into the `disabled` directory
+* Go into `C:\Program Files\BitNami DjangoStack\python`
+* Repeat the same steps as above.
+
+Then restart the djangoStack Apache service and check that the error does
+not occur when you upload a file.
