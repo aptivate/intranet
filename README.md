@@ -188,7 +188,14 @@ reliably and start automatically when the system is started.
 
 [Download the latest stable version of Tomcat 7](http://tomcat.apache.org/download-70.cgi).
 We recommend downloading the 32-bit/64-bit Windows Service Installer. Run
-the installer to install the application. 
+the installer to install the application.
+
+If the installer asks for the *path to java 6.0 or later JRE*, that probably
+means that you don't have a Java runtime environment installed. In that case,
+cancel the installation of Tomcat, download and install a
+[Java 7 JRE](http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1637588.html),
+probably the "Windows x86 Offline" or "Windows x64" version, and then start
+the Tomcat installation again.
 
 During the installation, enter a Tomcat Administrator User name and Password,
 and record them somewhere safe and secure.
