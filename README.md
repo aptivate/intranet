@@ -157,6 +157,8 @@ That's due to a [bug in virtualenv](https://github.com/pypa/virtualenv/issues/29
 	pip install git+git://github.com/aptivate/virtualenv.git
 	del /s/q django\intranet\.ve
 
+### Loading initial data
+
 Create a user that you can use to log into the Intranet:
 
 	python django\intranet\manage.py createsuperuser
@@ -166,6 +168,8 @@ Load any fixtures that you've been told to load, for example:
 	cd django\intranet
 	python manage.py loaddata atamis\fixtures\ata_groups.json
 	python manage.py loaddata atamis\fixtures\ata_programs.json
+
+### Testing the application
 
 Run the Intranet using the test server:
 
