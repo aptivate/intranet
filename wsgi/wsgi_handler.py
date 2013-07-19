@@ -46,8 +46,8 @@ os.environ[project_name.upper() + '_HOME'] = project_dir
 # for the rationale.
 
 from django.conf import settings
-import django.utils
-django.utils.translation.activate(settings.LANGUAGE_CODE)
+from django.utils import translation
+translation.activate(settings.LANGUAGE_CODE)
 
 try:
     active_monkeys = settings.MONKEY_PATCHES
