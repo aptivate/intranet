@@ -18,13 +18,13 @@
 	url = git://github.com/aptivate/django-tables2.git
 [submodule "django/intranet/aptivate_monkeypatch"]
 	path = django/intranet/aptivate_monkeypatch
-	url = git@github.com:aptivate/aptivate-monkeypatch.git
+	url = git://github.com/aptivate/aptivate-monkeypatch.git
 [submodule "django/intranet/aptivate_monkeypatches"]
 	path = django/intranet/aptivate_monkeypatches
-	url = git@github.com:aptivate/aptivate-monkeypatches.git
+	url = git://github.com/aptivate/aptivate-monkeypatches.git
 [submodule "django/intranet/theme"]
 	path = django/intranet/theme
 	url = git://github.com/aptivate/intranet-theme.git
 [submodule "django/intranet/logframe"]
 	path = django/intranet/logframe
-	url = git@github.com:aptivate/intranet-logframe.git
+	url = git://github.com/aptivate/intranet-logframe.git
