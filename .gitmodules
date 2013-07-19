@@ -25,3 +25,6 @@
 [submodule "django/intranet/theme"]
 	path = django/intranet/theme
 	url = git://github.com/aptivate/intranet-theme.git
+[submodule "django/intranet/logframe"]
+	path = django/intranet/logframe
+	url = git@github.com:aptivate/intranet-logframe.git
