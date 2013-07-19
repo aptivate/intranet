@@ -98,11 +98,13 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'binder.session.SessionMiddlewareWithIntranetUser',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'djangovalidation.middleware.HTMLValidationMiddleware',
+    # Uncomment the next line for simple clickjacking protection:
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -122,7 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'binder',
-    'documents',
+    # 'documents',
     'search',
     'django.contrib.admin',
     'south',
@@ -130,6 +132,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'django_tables2',
+    'theme',
 )
 
 HAYSTACK_CONNECTIONS = {
@@ -170,11 +173,13 @@ TEMPLATE_CONTEXT_PROCESSORS = \
     list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
     [
         'binder.context.additions',
-        'search.context.additions',
+        #'search.context.additions',
     ]
 
-AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
-SESSION_ENGINE = 'binder.session'
+TEST_RUNNER = 'binder.testing.SmartTestSuiteRunner'
+
+# AUTHENTICATION_BACKENDS = ('binder.auth.IntranetUserBackend',)
+# SESSION_ENGINE = 'binder.session'
 SESSION_SAVE_EVERY_REQUEST = True
 
 LOGIN_URL = '/login'

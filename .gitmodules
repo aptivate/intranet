@@ -22,3 +22,6 @@
 [submodule "django/intranet/aptivate_monkeypatches"]
 	path = django/intranet/aptivate_monkeypatches
 	url = git@github.com:aptivate/aptivate-monkeypatches.git
+[submodule "django/intranet/theme"]
+	path = django/intranet/theme
+	url = git://github.com/aptivate/intranet-theme.git

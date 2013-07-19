@@ -2,10 +2,9 @@ import django.contrib.auth.views
 
 import settings
 import binder.urls
-import documents.urls
 import search.urls
 
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 
@@ -23,7 +22,7 @@ if Site in admin.site._registry:
 urlpatterns = patterns('',
     # Examples:
     url(r'', include(binder.urls)),
-    url(r'^documents/', include(documents.urls)),
+    # url(r'^documents/', include(documents.urls)),
     # url(r'^users/', include(admin.site._registry[User].urls)),
     # url(r'^intranet/', include('intranet.foo.urls')),
 
