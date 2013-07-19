@@ -168,14 +168,20 @@ LOGGING = {
     }
 }
 
-from django.conf import global_settings
+try:
+    from django.conf import global_settings
 
-TEMPLATE_CONTEXT_PROCESSORS = \
-    list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
-    [
-        'binder.context.additions',
-        #'search.context.additions',
-    ]
+    TEMPLATE_CONTEXT_PROCESSORS = \
+        list(global_settings.TEMPLATE_CONTEXT_PROCESSORS) + \
+        [
+            'binder.context.additions',
+            #'search.context.additions',
+        ]
+except ImportError:
+    # this won't work if tasks.py tries to load settings.py, for example
+    # during update_db, because it's not in the virtualenv so it can't
+    # access Django modules. In this case we don't care, but we need a
+    # better long-term solution (DYE?)
 
 TEST_RUNNER = 'binder.testing.SmartTestSuiteRunner'
 
