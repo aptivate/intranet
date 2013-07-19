@@ -1,4 +1,5 @@
-Django==1.3
+# Django==1.5
+https://www.djangoproject.com/download/1.6b1/tarball/
 mysql-python==1.2.3
 south==0.7.3
 
@@ -14,8 +15,10 @@ lxml==2.3.3
 # jcc needs to be installed before we can install tika, so
 # it must be installed on the host using puppet or
 # pip install git+git://github.com/aptivate/jcc.git
-../django/python-tika
+# ../django/python-tika
 
 -e ../django/tables2
 
-PIL==1.1.7
+pillow==2.1.0
+
+django-dynamic-fixture==1.6.5
