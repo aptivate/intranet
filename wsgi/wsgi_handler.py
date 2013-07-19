@@ -31,8 +31,10 @@ if not found_ve_path:
 # not sure about this - might be required for packages installed from
 # git/svn etc
 #site.addsitedir(os.path.join(project_dir, 'django', project_name, '.ve', 'src'))
-sys.path.append(os.path.join(project_dir, 'django'))
-sys.path.append(os.path.join(project_dir, 'django', project_name))
+
+# don't ever allow importing prefixed with 'project'
+#sys.path.append(os.path.join(project_dir, 'django'))
+sys.path.append(os.path.join(project_dir, 'django', 'intranet'))
 
 # this basically does:
 # os.environ['PROJECT_NAME_HOME'] = '/var/django/project_name/dev/'
@@ -44,16 +46,8 @@ os.environ[project_name.upper() + '_HOME'] = project_dir
 # for the rationale.
 
 from django.conf import settings
-
-import django.core.management
-django.core.management.setup_environ(settings)
-utility = django.core.management.ManagementUtility()
-command = utility.fetch_command('runserver')
-command.validate()
-
-import django.conf
 import django.utils
-django.utils.translation.activate(django.conf.settings.LANGUAGE_CODE)
+django.utils.translation.activate(settings.LANGUAGE_CODE)
 
 try:
     active_monkeys = settings.MONKEY_PATCHES
@@ -64,10 +58,10 @@ from django.utils import importlib
 for module_name in active_monkeys:
     importlib.import_module(module_name)
 
-# Now we do the normal django set up
-import django.core.handlers.wsgi
-
-application = django.core.handlers.wsgi.WSGIHandler()
+# Now we do the normal django set up. From Django 1.5 onwards:
+# https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
 
 # Dozer is something that can help debug memory leaks
 #from dozer import Dozer
