@@ -16,6 +16,7 @@ django/intranet/django-source
 django/intranet/search_index
 django/intranet/uploads
 django/intranet/apache-tika.log
+django/intranet/static
 doc
 */.svn/tmp
 hs_err_*
