@@ -45,6 +45,10 @@ os.environ[project_name.upper() + '_HOME'] = project_dir
 # See http://blog.dscpl.com.au/2010/03/improved-wsgi-script-for-use-with.html
 # for the rationale.
 
+# Now we do the normal django set up. From Django 1.5 onwards:
+# https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+
 from django.conf import settings
 from django.utils import translation
 translation.activate(settings.LANGUAGE_CODE)
@@ -58,8 +62,6 @@ from django.utils import importlib
 for module_name in active_monkeys:
     importlib.import_module(module_name)
 
-# Now we do the normal django set up. From Django 1.5 onwards:
-# https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
