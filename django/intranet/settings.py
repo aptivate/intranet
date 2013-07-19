@@ -182,6 +182,7 @@ except ImportError:
     # during update_db, because it's not in the virtualenv so it can't
     # access Django modules. In this case we don't care, but we need a
     # better long-term solution (DYE?)
+    pass
 
 TEST_RUNNER = 'binder.testing.SmartTestSuiteRunner'
 
