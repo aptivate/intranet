@@ -1,9 +1,3 @@
-[submodule "django/jcc"]
-	path = django/jcc
-	url = git://github.com/aptivate/jcc.git
-[submodule "django/python-tika"]
-	path = django/python-tika
-	url = git://github.com/aptivate/python-tika.git
 [submodule "django/django-tables2"]
 	path = django/django-tables2
 	url = git://github.com/aptivate/django-tables2.git
@@ -22,3 +16,9 @@
 [submodule "django/tables2"]
 	path = django/tables2
 	url = git://github.com/aptivate/django-tables2.git
+[submodule "django/intranet/aptivate_monkeypatch"]
+	path = django/intranet/aptivate_monkeypatch
+	url = git@github.com:aptivate/aptivate-monkeypatch.git
+[submodule "django/intranet/aptivate_monkeypatches"]
+	path = django/intranet/aptivate_monkeypatches
+	url = git@github.com:aptivate/aptivate-monkeypatches.git
