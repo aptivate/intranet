@@ -29,8 +29,8 @@ env.project_type = project_settings.project_type
 env.use_virtualenv = True
 
 # valid environments - used for require statements in fablib
-env.valid_non_prod_envs = ('dev_server', 'staging_test', 'staging')
-env.valid_envs = ('dev_server', 'staging_test', 'staging', 'production')
+env.valid_non_prod_envs = ('dev_server', 'staging_test', 'staging', 'demo')
+env.valid_envs = ('dev_server', 'staging_test', 'staging', 'production', 'demo')
 
 # does this use apache - mostly for staging_test
 env.use_apache = True
@@ -60,7 +60,6 @@ def dev_server():
     env.hosts = ['fen-vz-' + project_settings.project_name + '-dev']
     _local_setup()
 
-
 def staging_test():
     """ use staging environment on remote host to run tests"""
     # this is on the same server as the customer facing stage site
@@ -68,21 +67,25 @@ def staging_test():
     env.project_dir = env.project + '_test'
     env.environment = 'staging_test'
     env.use_apache = False
-    env.hosts = ['fen-vz-atamis.fen.aptivate.org']
+    env.hosts = ['fen-vz-intranet.fen.aptivate.org']
     _local_setup()
-
 
 def staging():
     """ use staging environment on remote host to demo to client"""
     env.environment = 'staging'
-    env.hosts = ['fen-vz-atamis.fen.aptivate.org']
+    env.hosts = ['fen-vz-intranet.fen.aptivate.org']
     _local_setup()
-
 
 def production():
     """ use production environment on remote host"""
     env.environment = 'production'
     env.hosts = ['lin-' + project_settings.project_name + '.aptivate.org:48001']
+    _local_setup()
+
+def demo():
+    """use to deploy to demo server for demos to potentials users"""
+    env.environment = 'demo'
+    env.hosts = ['fen-vz-intranet-demo.fen.aptivate.org']
     _local_setup()
 
 def deploy():
